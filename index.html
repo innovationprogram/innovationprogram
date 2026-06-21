@@ -255,7 +255,7 @@
             top: 20px;
             right: 20px;
             display: grid;
-            grid-template-columns: repeat(6, 40px);
+            grid-template-columns: repeat(7, 40px);
             gap: 4px;
             background: rgba(0,0,0,0.4);
             padding: 8px;
@@ -502,11 +502,13 @@
 
         @media (max-width: 768px) {
             body { flex-direction: column; height: auto; overflow-y: auto; }
+            
             .sidebar { width: 100%; height: auto; flex-direction: column; border-right: none; border-bottom: 1px solid var(--border-color); padding: 10px 0; gap: 10px; }
+            
             .logo-container { padding: 0 20px; border-bottom: none; width: 100%; display: flex; justify-content: space-between; align-items: center; }
             .mobile-team { display: flex !important; flex-direction: column; align-items: flex-end; text-align: right; }
             .mobile-team-title { font-size: 12px; color: var(--primary-blue); font-weight: 700; display: flex; align-items: center; gap: 4px; }
-            .mobile-team-names { font-size: 9px; color: var(--text-muted); max-width: 150px; line-height: 1.2; margin-top: 2px; }
+            .mobile-team-names { font-size: 9px; color: var(--text-muted); max-width: 170px; line-height: 1.2; margin-top: 2px; }
             
             .top-header, .map-toolbar, .team-box { display: none !important; }
             
@@ -518,9 +520,9 @@
                 gap: 15px; 
                 overflow-x: auto; 
                 width: 100%;
-                scrollbar-width: none;
+                scrollbar-width: none; 
             }
-            .nav-menu::-webkit-scrollbar { display: none; }
+            .nav-menu::-webkit-scrollbar { display: none; } 
             
             .nav-item { padding: 8px 12px; font-size: 13px; border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; }
             .nav-item.active { border-left: none; border-bottom-color: var(--primary-blue); background: none; }
@@ -528,7 +530,7 @@
             .main-content { overflow-y: visible; }
             .dashboard-grid { display: flex; flex-direction: column; padding: 15px; gap: 20px; }
             .map-card { height: 350px; }
-            .parking-grid.mobile-grid { position: relative; top: auto; right: auto; margin: 0 auto; transform: scale(0.95); transform-origin: center; justify-content: center; box-shadow: var(--shadow-md); }
+            .parking-grid.mobile-grid { position: relative; top: auto; right: auto; margin: 0 auto; transform: scale(0.95); transform-origin: center; justify-content: center; box-shadow: var(--shadow-md); grid-template-columns: repeat(7, 40px); }
             .table-card > div { overflow-x: auto; }
             th, td { white-space: nowrap; }
         }
@@ -604,14 +606,14 @@
                 <div class="mobile-team-title">
                     <span class="material-icons-round" style="font-size: 14px;">groups</span> Grupo 5
                 </div>
-                <div class="mobile-team-names">Gianella, Pamela, Fernando, Fabrizio, Adolfo</div>
+                <div class="mobile-team-names">Gianella, Pamela, Fernando, Fabrizio, Adolfo, Kristhel</div>
             </div>
         </div>
         
         <nav class="nav-menu">
-            <a href="#" class="nav-item active" onclick="cambiarVista(event, this, 'mapa')"><span class="material-icons-round">map</span> Mapa Satelital</a>
-            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'mapa')"><span class="material-icons-round">grid_view</span> Asignación</a>
-            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'registro')"><span class="material-icons-round">bar_chart</span> Registro</a>
+            <a href="#" class="nav-item active" onclick="cambiarVista(event, this, 'mapa', 'general')"><span class="material-icons-round">map</span> Mapa Satelital</a>
+            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'mapa', 'asignacion')"><span class="material-icons-round">grid_view</span> Asignación</a>
+            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'registro', 'general')"><span class="material-icons-round">bar_chart</span> Registro</a>
         </nav>
 
         <div class="team-box">
@@ -625,6 +627,7 @@
                 <li class="team-member">Fernando</li>
                 <li class="team-member">Fabrizio</li>
                 <li class="team-member">Adolfo</li>
+                <li class="team-member">Kristhel</li>
             </ul>
         </div>
     </aside>
@@ -637,8 +640,8 @@
         <div class="dashboard-grid" id="vista-mapa">
             <div class="map-card">
                 <div class="map-toolbar">
-                    <button class="map-btn active" onclick="cambiarBotonMapa(this)">Satélite</button>
-                    <button class="map-btn" onclick="cambiarBotonMapa(this)">Zonas Asignadas</button>
+                    <button class="map-btn active" onclick="cambiarBotonMapa(this, 'satelite')">Satélite</button>
+                    <button class="map-btn" onclick="cambiarBotonMapa(this, 'ocupados')">Zonas Asignadas</button>
                 </div>
                 <div class="map-container" id="mapa-gratis">
                     <div class="parking-grid" id="terreno-exterior"></div>
@@ -743,26 +746,6 @@
     </main>
 
     <script>
-        function cambiarVista(event, elemento, vistaDestino) {
-            if (event) event.preventDefault();
-            
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if(elemento) elemento.classList.add('active');
-
-            if (vistaDestino === 'mapa') {
-                document.getElementById('vista-mapa').style.display = ''; 
-                document.getElementById('vista-registro').style.display = 'none';
-            } else if (vistaDestino === 'registro') {
-                document.getElementById('vista-mapa').style.display = 'none';
-                document.getElementById('vista-registro').style.display = 'block';
-            }
-        }
-
-        function cambiarBotonMapa(elemento) {
-            document.querySelectorAll('.map-btn').forEach(el => el.classList.remove('active'));
-            elemento.classList.add('active');
-        }
-
         function ajustarVistaMovil() {
             const grid = document.getElementById('terreno-exterior');
             if (window.innerWidth <= 768) {
@@ -791,13 +774,22 @@
         }
         const database = firebase.database();
 
+        let mapReady = false;
+        let map;
+        let marcadoresLayer;
+        let iconNormal;
+        let iconOcupado;
+        let modoSidebar = 'general';
+        let modoMapa = 'satelite';
+
         const espacios = [
             'A1', 'A2', 'A3', 'A4', 'A5', 
             'B1', 'B2', 'B3', 'B4', 'B5', 
             'C1', 'C2', 'C3', 'C4', 'C5', 
             'D1', 'D2', 'D3', 'D4', 'D5', 
             'E1', 'E2', 'E3', 'E4', 'E5',
-            'F1', 'F2', 'F3', 'F4', 'F5'
+            'F1', 'F2', 'F3', 'F4', 'F5',
+            'G1', 'G2', 'G3', 'G4', 'G5'
         ];
         
         let miPlaca = "";
@@ -809,6 +801,50 @@
         let miEspacioActual = null; 
         let timeoutAviso = null;
         let timeoutLiberacion = null;
+
+        const parkingSpotsCoords = [
+            { lat: -6.826896952567946, lng: -79.92368676791544, name: "A1" },
+            { lat: -6.82693025235926,  lng: -79.92373774503297, name: "A2" },
+            { lat: -6.826963599061987, lng: -79.92378404622772, name: "A3" },
+            { lat: -6.827056810746118, lng: -79.92393089715614, name: "A4" },
+            { lat: -6.827171064060995, lng: -79.92392268316294, name: "A5" },
+            
+            { lat: -6.826916952567946, lng: -79.92365676791544, name: "B1" },
+            { lat: -6.82695025235926,  lng: -79.92370774503297, name: "B2" },
+            { lat: -6.826983599061987, lng: -79.92375404622772, name: "B3" },
+            { lat: -6.827076810746118, lng: -79.92390089715614, name: "B4" },
+            { lat: -6.827191064060995, lng: -79.92389268316294, name: "B5" },
+
+            { lat: -6.827278042684312, lng: -79.92435014148151, name: "C1" },
+            { lat: -6.827256071370563, lng: -79.9243239899465,  name: "C2" },
+            { lat: -6.8272460844094365, lng: -79.92429582675493, name: "C3" },
+            { lat: -6.827233434258377, lng: -79.92428174515915, name: "C4" },
+            { lat: -6.827402546776524, lng: -79.92429247399403, name: "C5" },
+
+            { lat: -6.827377912279561, lng: -79.92426229913679, name: "D1" },
+            { lat: -6.827369257629711, lng: -79.92421670158856, name: "D2" },
+            { lat: -6.8273459519478585, lng: -79.92418249935093, name: "D3" },
+            { lat: -6.827326641524896, lng: -79.92414762648119, name: "D4" },
+            { lat: -6.827304681131366, lng: -79.92411478985487, name: "D5" },
+
+            { lat: -6.827261728812469, lng: -79.92404912298207, name: "E1" },
+            { lat: -6.827241754890228, lng: -79.9240149248209,  name: "E2" },
+            { lat: -6.827219783574814, lng: -79.92398944383807, name: "E3" },
+            { lat: -6.82718649370104,  lng: -79.92412556593058, name: "E4" },
+            { lat: -6.827162524990505, lng: -79.92408332114326, name: "E5" },
+
+            { lat: -6.827119425936285, lng: -79.92382847930676, name: "F1" },
+            { lat: -6.827102780996192, lng: -79.92380098666739, name: "F2" },
+            { lat: -6.8270808096744044, lng: -79.92377818789328, name: "F3" },
+            { lat: -6.827052846172469, lng: -79.92373594310592, name: "F4" },
+            { lat: -6.827001557816475, lng: -79.92387507280762, name: "F5" },
+
+            { lat: -6.827402546776524, lng: -79.92426547399403, name: "G1" },
+            { lat: -6.827402546776524, lng: -79.92423847399403, name: "G2" },
+            { lat: -6.827162524990505, lng: -79.92405632114326, name: "G3" },
+            { lat: -6.827162524990505, lng: -79.92402932114326, name: "G4" },
+            { lat: -6.827052846172469, lng: -79.92370894310592, name: "G5" }
+        ];
 
         window.addEventListener('load', () => {
             setTimeout(() => {
@@ -824,6 +860,66 @@
             ajustarVistaMovil();
             iniciarLimpiezaAutomatica();
         });
+
+        function cambiarVista(event, elemento, vistaDestino, subModo) {
+            if (event) event.preventDefault();
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(elemento) elemento.classList.add('active');
+
+            if (vistaDestino === 'mapa') {
+                document.getElementById('vista-mapa').style.display = ''; 
+                document.getElementById('vista-registro').style.display = 'none';
+            } else if (vistaDestino === 'registro') {
+                document.getElementById('vista-mapa').style.display = 'none';
+                document.getElementById('vista-registro').style.display = 'block';
+            }
+
+            modoSidebar = subModo || 'general';
+            actualizarMarcadoresMapa();
+        }
+
+        function cambiarBotonMapa(elemento, modo) {
+            document.querySelectorAll('.map-btn').forEach(el => el.classList.remove('active'));
+            elemento.classList.add('active');
+            modoMapa = modo;
+            actualizarMarcadoresMapa();
+        }
+
+        function actualizarMarcadoresMapa() {
+            if (!mapReady) return;
+            marcadoresLayer.clearLayers();
+
+            parkingSpotsCoords.forEach(spot => {
+                const dataSpot = estadoGlobal[spot.name] || { estado: false, placa: "" };
+                let mostrar = false;
+                let iconoUsar = iconNormal;
+
+                if (modoMapa === 'ocupados') {
+                    if (dataSpot.estado === true) {
+                        mostrar = true;
+                        iconoUsar = iconOcupado;
+                    }
+                } else {
+                    if (modoSidebar === 'asignacion') {
+                        if (dataSpot.estado === true && dataSpot.placa === miPlaca && miPlaca !== "") {
+                            mostrar = true;
+                            iconoUsar = iconNormal;
+                        }
+                    } else {
+                        mostrar = true;
+                        iconoUsar = iconNormal;
+                    }
+                }
+
+                if (mostrar) {
+                    let textPopup = dataSpot.estado ? `<b>Estacionamiento ${spot.name}</b><br>Ocupado por: ${dataSpot.placa}` : `<b>Estacionamiento ${spot.name}</b><br>Libre`;
+                    L.marker([spot.lat, spot.lng], { icon: iconoUsar })
+                    .bindPopup(textPopup)
+                    .addTo(marcadoresLayer);
+                }
+            });
+        }
 
         function generarEstructuraDOM() {
             const tableBody = document.getElementById('tableBody');
@@ -979,6 +1075,7 @@
                     Object.keys(data).forEach(id => {
                         sincronizarUI(id, data[id].estado, data[id].placa);
                     });
+                    actualizarMarcadoresMapa();
                 }
             });
         }
@@ -1013,7 +1110,7 @@
 
                 const ingresos = (p5 * 5) + (p8 * 8) + (p15 * 15);
                 document.getElementById('stat-ingresos').textContent = 'S/ ' + ingresos.toFixed(2);
-                
+
                 let maxVal = Math.max(p5, p8, p15, pGratis);
                 if (maxVal === 0) maxVal = 1; 
 
@@ -1132,62 +1229,29 @@
         }
 
         function inicializarMapa() {
-            const map = L.map('mapa-gratis').setView([-6.827473121649184, -79.92381392291851], 19);
+            map = L.map('mapa-gratis').setView([-6.827473121649184, -79.92381392291851], 19);
             
             L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 maxZoom: 19
             }).addTo(map);
 
-            const parkingIcon = L.icon({
+            iconNormal = L.icon({
                 iconUrl: 'https://www.cintermex.com/assets/js/bootstrap-gridmanager/otr/tinymce/plugins/jsplus_file_manager/alphamanager/uploads//imagenes/fotos_generales/Fotos%20factura%20en%20linea/LogoEstacionamiento1.png',
                 iconSize: [42, 42],       
                 iconAnchor: [21, 21],     
                 popupAnchor: [0, -21]     
             });
 
-            const parkingSpotsCoords = [
-                { lat: -6.826896952567946, lng: -79.92368676791544, name: "A1" },
-                { lat: -6.82693025235926,  lng: -79.92373774503297, name: "A2" },
-                { lat: -6.826963599061987, lng: -79.92378404622772, name: "A3" },
-                { lat: -6.827056810746118, lng: -79.92393089715614, name: "A4" },
-                { lat: -6.827171064060995, lng: -79.92392268316294, name: "A5" },
-                
-                { lat: -6.826916952567946, lng: -79.92365676791544, name: "B1" },
-                { lat: -6.82695025235926,  lng: -79.92370774503297, name: "B2" },
-                { lat: -6.826983599061987, lng: -79.92375404622772, name: "B3" },
-                { lat: -6.827076810746118, lng: -79.92390089715614, name: "B4" },
-                { lat: -6.827191064060995, lng: -79.92389268316294, name: "B5" },
-
-                { lat: -6.827278042684312, lng: -79.92435014148151, name: "C1" },
-                { lat: -6.827256071370563, lng: -79.9243239899465,  name: "C2" },
-                { lat: -6.8272460844094365, lng: -79.92429582675493, name: "C3" },
-                { lat: -6.827233434258377, lng: -79.92428174515915, name: "C4" },
-                { lat: -6.827402546776524, lng: -79.92429247399403, name: "C5" },
-
-                { lat: -6.827377912279561, lng: -79.92426229913679, name: "D1" },
-                { lat: -6.827369257629711, lng: -79.92421670158856, name: "D2" },
-                { lat: -6.8273459519478585, lng: -79.92418249935093, name: "D3" },
-                { lat: -6.827326641524896, lng: -79.92414762648119, name: "D4" },
-                { lat: -6.827304681131366, lng: -79.92411478985487, name: "D5" },
-
-                { lat: -6.827261728812469, lng: -79.92404912298207, name: "E1" },
-                { lat: -6.827241754890228, lng: -79.9240149248209,  name: "E2" },
-                { lat: -6.827219783574814, lng: -79.92398944383807, name: "E3" },
-                { lat: -6.82718649370104,  lng: -79.92412556593058, name: "E4" },
-                { lat: -6.827162524990505, lng: -79.92408332114326, name: "E5" },
-
-                { lat: -6.827119425936285, lng: -79.92382847930676, name: "F1" },
-                { lat: -6.827102780996192, lng: -79.92380098666739, name: "F2" },
-                { lat: -6.8270808096744044, lng: -79.92377818789328, name: "F3" },
-                { lat: -6.827052846172469, lng: -79.92373594310592, name: "F4" },
-                { lat: -6.827001557816475, lng: -79.92387507280762, name: "F5" }
-            ];
-
-            parkingSpotsCoords.forEach((spot) => {
-                L.marker([spot.lat, spot.lng], { icon: parkingIcon })
-                    .addTo(map)
-                    .bindPopup(`<b>Estacionamiento ${spot.name}</b><br>Zona de Estacionamiento`);
+            iconOcupado = L.icon({
+                iconUrl: 'https://media.istockphoto.com/id/1072078704/es/vector/signo-estacionar-proibido-letra-e-en-rojo-tachado-de-c%C3%ADrculo-vector-de.jpg?s=612x612&w=0&k=20&c=ynxsoZHjqvbs656nt19WgqO0SJfHv1XBDy4OIBNlnbo=',
+                iconSize: [42, 42],       
+                iconAnchor: [21, 21],     
+                popupAnchor: [0, -21]     
             });
+
+            marcadoresLayer = L.layerGroup().addTo(map);
+            mapReady = true;
+            actualizarMarcadoresMapa();
         }
     </script>
 </body>
