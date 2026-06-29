@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovadores | Control de Tránsito</title>
+    <title>Innovadores | InnovaTransit</title>
     <link rel="icon" href="IP.png" type="image/png">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -117,6 +117,19 @@
         .top-header { background: var(--bg-panel); color: var(--text-main); padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
         body.dark-mode .top-header { background: rgba(30, 41, 59, 0.9); }
         .top-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+
+        /* Estilos del Input de Seguridad Oculto */
+        .secret-admin-input {
+            background: transparent; border: none; outline: none;
+            color: transparent; 
+            width: 30px; transition: width 0.3s, color 0.3s;
+            font-size: 14px; margin-left: 10px;
+        }
+        .secret-admin-input:focus {
+            color: var(--status-red); 
+            border-bottom: 1px dashed var(--status-red); 
+            width: 100px;
+        }
 
         .dashboard-grid { padding: 32px; display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: auto auto; gap: 24px; max-width: 1600px; margin: 0 auto; width: 100%; }
         
@@ -277,8 +290,14 @@
             th, td { white-space: nowrap; padding: 12px; }
             .registro-container, .tutorial-container-view { padding: 16px; }
             .stat-card { padding: 20px; }
-            .yuki-chat-panel { width: 100%; height: 100%; bottom: 0; right: 0; border-radius: 0; max-height: 100vh; position: fixed; z-index: 99999; }
+            
+            /* Solución al teclado móvil que tapa a Yuki */
+            .yuki-chat-panel { 
+                width: 100%; bottom: 0; right: 0; border-radius: 0; position: fixed; z-index: 99999; 
+            }
             .yuki-fab { bottom: 20px; right: 20px; }
+
+            .secret-admin-input { display: none !important; } /* Ocultar el input admin en móviles */
         }
     </style>
 </head>
@@ -286,6 +305,16 @@
 
     <div id="splash-screen">
         <img src="IP.png" alt="Innovation Program">
+    </div>
+
+    <div id="userAlertModal" class="modal-overlay" style="z-index: 100000;">
+        <div class="modal-content" style="border: 3px solid var(--status-red); background: #fff1f2;">
+            <h3 style="color: var(--status-red); display: flex; justify-content: center; align-items: center; gap: 8px; font-weight: 800;">
+                <span class="material-icons-round">warning</span> Atención / Seguridad
+            </h3>
+            <p id="userAlertText" style="font-size: 16px; font-weight: 600; color: #881337;"></p>
+            <button class="btn-action" style="background: var(--status-red); color: white; padding: 12px; font-size: 15px;" onclick="document.getElementById('userAlertModal').style.display='none'">Entendido</button>
+        </div>
     </div>
 
     <div id="plateModal" class="modal-overlay">
@@ -388,7 +417,10 @@
 
     <main class="main-content">
         <header class="top-header">
-            <h2>Panel Principal</h2>
+            <div style="display: flex; align-items: center;">
+                <h2>Panel Principal</h2>
+                <input type="password" id="secretAdminInput" class="secret-admin-input" autocomplete="off" onkeydown="verificarAdmin(event)">
+            </div>
         </header>
 
         <div class="dashboard-grid" id="vista-mapa">
@@ -490,6 +522,44 @@
             </div>
         </div>
 
+        <div class="registro-container" id="vista-seguridad">
+            <div style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h2 style="color: var(--status-red); font-size: 28px; font-weight: 800; margin-bottom: 8px;">Panel de Seguridad</h2>
+                    <p style="color: var(--text-muted); font-size: 16px;">Gestión de conflictos, reubicación y alertas directas a conductores.</p>
+                </div>
+                <button class="btn-action" style="background: var(--bg-panel); color: var(--status-red); border: 2px solid var(--status-red);" onclick="salirAdmin()">Cerrar Sesión Segura</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
+                <div class="table-card" style="border-top: 4px solid var(--status-red);">
+                    <h3 style="color: var(--status-red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;"><span class="material-icons-round">warning</span> Enviar Alerta Inmediata</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">La alerta aparecerá como un pop-up rojo en el dispositivo del usuario.</p>
+                    <input type="text" id="adminAlertPlaca" class="input-placa" placeholder="PLACA (EJ: ABC123)" style="width: 100%; margin-bottom: 12px; font-size: 14px; padding: 10px;">
+                    <textarea id="adminAlertMsg" placeholder="Escribe la advertencia o instrucción aquí..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); height: 80px; margin-bottom: 12px; font-family: inherit; font-size: 14px; resize: none;"></textarea>
+                    <button class="btn-action" style="background: var(--status-red); color: white; width: 100%; padding: 12px;" onclick="enviarAlertaAdmin()">Emitir Alerta al Vehículo</button>
+                </div>
+
+                <div class="table-card" style="border-top: 4px solid var(--primary-blue);">
+                    <h3 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px; color: var(--primary-blue);"><span class="material-icons-round">settings</span> Gestión de Espacios</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Resolver conflictos de placas o liberar espacios trabados.</p>
+                    <div style="max-height: 250px; overflow-y: auto;">
+                        <table id="adminSpacesTable">
+                            <thead>
+                                <tr>
+                                    <th>Espacio</th>
+                                    <th>Placa</th>
+                                    <th>Forzar Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminSpacesBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="yuki-fab" onclick="toggleYukiChat()">
             <span class="yuki-badge">¡Yuki!</span>
             <svg viewBox="0 0 24 24" fill="white" width="30" height="30">
@@ -570,6 +640,7 @@
             document.getElementById('vista-mapa').style.display = vistaDestino === 'mapa' ? '' : 'none';
             document.getElementById('vista-registro').style.display = vistaDestino === 'registro' ? 'block' : 'none';
             document.getElementById('vista-tutorial').style.display = vistaDestino === 'tutorial' ? 'block' : 'none';
+            document.getElementById('vista-seguridad').style.display = vistaDestino === 'seguridad' ? 'block' : 'none';
 
             modoSidebar = subModo || 'general';
             if(vistaDestino === 'mapa') actualizarMarcadoresMapa();
@@ -594,6 +665,22 @@
         }
         
         window.addEventListener('resize', ajustarVistaMovil);
+
+        /* --- SOLUCIÓN DE YUKI PARA TECLADO MÓVIL --- */
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                const panel = document.getElementById('yukiChatPanel');
+                if (window.innerWidth <= 768 && panel.classList.contains('active')) {
+                    panel.style.height = window.visualViewport.height + 'px';
+                    panel.style.top = window.visualViewport.offsetTop + 'px';
+                    panel.style.bottom = 'auto';
+                } else {
+                    panel.style.height = '';
+                    panel.style.top = '';
+                    panel.style.bottom = '';
+                }
+            });
+        }
 
         let tiempoReservaSegundos = 600;
 
@@ -714,6 +801,118 @@
             ajustarVistaMovil();
             iniciarLimpiezaAutomatica();
         });
+
+        /* --- MODO SEGURIDAD (ADMIN) LOGIC --- */
+        function verificarAdmin(e) {
+            if (e.key === 'Enter') {
+                if (e.target.value === 'Security') {
+                    e.target.value = '';
+                    let password = prompt("Ingrese la contraseña de seguridad:");
+                    if (password === "InnovaTransit") {
+                        cambiarVista(null, null, 'seguridad', 'general');
+                        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                        actualizarTablaAdmin();
+                        alert("⚠️ Has ingresado al Modo de Seguridad del Sistema.");
+                    } else {
+                        alert("Contraseña incorrecta. Acceso denegado.");
+                    }
+                } else {
+                    e.target.value = '';
+                }
+            }
+        }
+
+        function salirAdmin() {
+            cambiarVista(null, document.querySelector('.nav-item:nth-child(1)'), 'mapa', 'general');
+        }
+
+        function actualizarTablaAdmin() {
+            const tbody = document.getElementById('adminSpacesBody');
+            tbody.innerHTML = '';
+            
+            espacios.forEach(id => {
+                const data = estadoGlobal[id];
+                if (data && data.estado) {
+                    tbody.innerHTML += `
+                        <tr style="background: rgba(239, 68, 68, 0.05);">
+                            <td><strong>${id}</strong></td>
+                            <td><span class="badge" style="background: var(--border-color); color: var(--text-main);">${data.placa}</span></td>
+                            <td style="display: flex; gap: 8px;">
+                                <button class="btn-action" style="background: var(--status-red); color: white; padding: 6px 12px; font-size: 12px;" onclick="adminLiberar('${id}', '${data.placa}')">Liberar</button>
+                                <button class="btn-action" style="background: var(--primary-blue); color: white; padding: 6px 12px; font-size: 12px;" onclick="adminReubicar('${id}', '${data.placa}', ${data.duracion || 0}, ${data.tiempo || 0})">Mover</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+
+            if (tbody.innerHTML === '') {
+                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color: var(--text-muted);">No hay vehículos registrados actualmente.</td></tr>';
+            }
+        }
+
+        function adminLiberar(id, placa) {
+            if (confirm(`¿Estás seguro de forzar la liberación del espacio ${id} (Placa: ${placa})?`)) {
+                database.ref('estacionamientos/' + id).set({ estado: false, placa: "", tiempo: 0, duracion: 0 });
+                if (miEspacioActual === id) { miEspacioActual = null; miPlaca = ""; }
+                alert("Espacio liberado exitosamente.");
+            }
+        }
+
+        function adminReubicar(idActual, placa, duracionOld, tiempoOld) {
+            const nuevoId = prompt(`Mover placa ${placa} del espacio ${idActual}.\nIngresa el ID del NUEVO espacio (Ej: B2):`).trim().toUpperCase();
+            if (!nuevoId) return;
+
+            if (!espacios.includes(nuevoId)) {
+                alert("El espacio ingresado no existe.");
+                return;
+            }
+
+            if (estadoGlobal[nuevoId] && estadoGlobal[nuevoId].estado) {
+                alert(`El espacio ${nuevoId} ya está ocupado por ${estadoGlobal[nuevoId].placa}. Libéralo primero.`);
+                return;
+            }
+
+            database.ref('estacionamientos/' + idActual).set({ estado: false, placa: "", tiempo: 0, duracion: 0 });
+            database.ref('estacionamientos/' + nuevoId).set({ estado: true, placa: placa, tiempo: tiempoOld, duracion: duracionOld });
+            
+            if (miEspacioActual === idActual) miEspacioActual = nuevoId;
+
+            alert(`Vehículo reubicado con éxito al espacio ${nuevoId}.`);
+        }
+
+        function enviarAlertaAdmin() {
+            const placa = document.getElementById('adminAlertPlaca').value.trim().toUpperCase();
+            const msg = document.getElementById('adminAlertMsg').value.trim();
+
+            if (placa.length !== 6 || msg === "") {
+                alert("Debes ingresar una placa válida (6 caracteres) y un mensaje.");
+                return;
+            }
+
+            database.ref('alertas/' + placa).set({
+                mensaje: msg,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Alerta enviada correctamente a la placa " + placa);
+                document.getElementById('adminAlertPlaca').value = "";
+                document.getElementById('adminAlertMsg').value = "";
+            });
+        }
+
+        function iniciarEscuchaAlertasUsuario() {
+            if (!miPlaca) return;
+            
+            database.ref('alertas/' + miPlaca).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.mensaje) {
+                    document.getElementById('userAlertText').innerText = data.mensaje;
+                    document.getElementById('userAlertModal').style.display = 'flex';
+                    database.ref('alertas/' + miPlaca).remove();
+                }
+            });
+        }
+        /* -------------------------------------- */
 
         function escucharHistorial() {
             database.ref('historial_reservas').on('value', (snapshot) => {
@@ -843,6 +1042,8 @@
 
                 registrarEstadisticaEnFirebase('uso_gratuito');
                 procederAOcupar();
+                
+                iniciarEscuchaAlertasUsuario();
             } else {
                 alert("Por favor, ingrese una placa de exactamente 6 caracteres alfanuméricos.");
             }
@@ -901,6 +1102,10 @@
                     });
                     document.getElementById('contador-espacios').textContent = `${ocupados} / ${espacios.length} Activos`;
                     actualizarMarcadoresMapa();
+                    
+                    if(document.getElementById('vista-seguridad').style.display === 'block') {
+                        actualizarTablaAdmin();
+                    }
                 }
             });
         }
