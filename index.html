@@ -6,7 +6,7 @@
     <title>Innovadores | Control de Tránsito</title>
     <link rel="icon" href="IP.png" type="image/png">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -19,20 +19,32 @@
         :root {
             --primary-blue: #005088;
             --primary-dark: #003a63;
+            --primary-gradient: linear-gradient(135deg, #005088 0%, #003a63 100%);
             --accent-green: #84BD00;
             --status-red: #ef4444;
             --status-yellow: #f59e0b;
             --status-green: #22c55e;
-            --bg-body: #f1f5f9;
+            --bg-body: #f4f7f9;
             --bg-panel: #ffffff;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
-            --radius-md: 8px;
-            --radius-lg: 12px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.12);
+            --radius-md: 12px;
+            --radius-lg: 20px;
+        }
+
+        body.dark-mode {
+            --bg-body: #0f172a;
+            --bg-panel: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.3);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+            --primary-gradient: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%);
         }
 
         * {
@@ -48,6 +60,7 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
         }
 
         #splash-screen {
@@ -61,478 +74,211 @@
             transition: opacity 0.5s ease;
         }
 
-        #splash-screen img {
-            max-width: 300px;
-            height: auto;
-        }
-
-        .hidden-splash {
-            opacity: 0;
-            pointer-events: none;
-        }
+        #splash-screen img { max-width: 300px; height: auto; }
+        .hidden-splash { opacity: 0; pointer-events: none; }
 
         .sidebar {
-            width: 260px;
+            width: 280px;
             background-color: var(--bg-panel);
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             box-shadow: var(--shadow-sm);
             z-index: 10;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
-        .logo-container {
-            padding: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .logo-container { padding: 28px 24px; display: flex; align-items: center; justify-content: space-between; }
+        .logo-left { display: flex; align-items: center; gap: 14px; }
+        .logo-left img { width: 48px; height: auto; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        .logo-left h1 { font-size: 20px; color: var(--primary-blue); font-weight: 800; line-height: 1.1; letter-spacing: -0.5px; }
+        body.dark-mode .logo-left h1 { color: #60a5fa; }
+        .mobile-team { display: none; }
 
-        .logo-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .weather-widget { padding: 0 24px 24px 24px; display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid var(--border-color); }
+        .weather-item { display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 14px; font-weight: 500; background: var(--bg-body); padding: 10px 14px; border-radius: 10px; transition: background-color 0.3s; }
+        .weather-item span.material-icons-round { font-size: 20px; color: var(--primary-blue); }
+        body.dark-mode .weather-item span.material-icons-round { color: #60a5fa; }
 
-        .logo-left img {
-            width: 45px;
-            height: auto;
-        }
+        .nav-menu { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; }
+        .nav-item { display: flex; align-items: center; padding: 14px 20px; color: var(--text-muted); text-decoration: none; gap: 14px; font-weight: 600; border-radius: var(--radius-md); transition: all 0.2s ease; }
+        .nav-item:hover { background-color: var(--bg-body); color: var(--primary-blue); transform: translateX(4px); }
+        .nav-item.active { background: var(--primary-gradient); color: white; box-shadow: 0 4px 12px rgba(0, 80, 136, 0.2); }
+        body.dark-mode .nav-item:hover { color: #60a5fa; }
 
-        .logo-left h1 {
-            font-size: 18px;
-            color: var(--primary-blue);
-            font-weight: 700;
-            line-height: 1.2;
-        }
+        .team-box { margin-top: auto; padding: 24px; border-top: 1px solid var(--border-color); background-color: var(--bg-body); transition: background-color 0.3s; }
+        .team-title { font-size: 14px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--primary-blue); font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        body.dark-mode .team-title { color: #60a5fa; }
+        .team-list { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .team-member { font-size: 13px; color: var(--text-main); font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        .team-member::before { content: ""; width: 6px; height: 6px; background-color: var(--accent-green); border-radius: 50%; }
 
-        .mobile-team {
-            display: none; 
-        }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background-color: var(--bg-body); }
+        .top-header { background: var(--bg-panel); color: var(--text-main); padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 50; backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        body.dark-mode .top-header { background: rgba(30, 41, 59, 0.9); }
+        .top-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
 
-        .nav-menu {
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 24px;
-            color: var(--text-muted);
-            text-decoration: none;
-            gap: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border-left: 4px solid transparent;
-            cursor: pointer;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background-color: #f8fafc;
-            color: var(--primary-blue);
-            border-left-color: var(--primary-blue);
-        }
-
-        .team-box {
-            margin-top: auto;
-            padding: 20px 24px;
-            border-top: 1px solid var(--border-color);
-            background-color: #f8fafc;
-        }
-
-        .team-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--primary-blue);
-            font-weight: 700;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .team-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .team-member {
-            font-size: 13px;
-            color: var(--text-main);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .team-member::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            background-color: var(--accent-green);
-            border-radius: 50%;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-        }
-
-        .top-header {
-            background-color: var(--primary-blue);
-            color: white;
-            padding: 16px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-md);
-        }
-
-        .dashboard-grid {
-            padding: 24px;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            grid-template-rows: auto auto;
-            gap: 24px;
-        }
-
-        .map-card {
-            grid-column: 1 / -1;
-            background: var(--bg-panel);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 500px;
-            position: relative;
-        }
-
-        .map-toolbar {
-            padding: 12px 20px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            gap: 10px;
-            background: #f8fafc;
-            z-index: 1000;
-        }
-
-        .map-btn {
-            background: white;
-            border: 1px solid var(--border-color);
-            padding: 6px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .map-btn.active {
-            background: var(--primary-blue);
-            color: white;
-            border-color: var(--primary-blue);
-        }
-
-        .map-container {
-            flex: 1;
-            position: relative;
-            background-color: #cbd5e1;
-        }
-
-        .parking-grid {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: grid;
-            grid-template-columns: repeat(7, 40px);
-            gap: 4px;
-            background: rgba(0,0,0,0.4);
-            padding: 8px;
-            border-radius: 8px;
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-        }
-
-        .spot {
-            width: 40px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 11px;
-            border-radius: 4px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.1s, background-color 0.3s;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
-        .spot.green { background-color: var(--status-green); }
-        .spot.red { background-color: var(--status-red); }
-
-        .table-card {
-            background: var(--bg-panel);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            overflow-x: auto;
-        }
-
-        .card-header {
-            margin-bottom: 16px;
-        }
-
-        .card-header h3 {
-            color: var(--text-main);
-            font-size: 18px;
-            margin: 0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f8fafc;
-            color: var(--text-muted);
-            padding: 12px 16px;
-            font-size: 13px;
-            text-transform: uppercase;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            font-size: 14px;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge.transit { background: #fee2e2; color: #991b1b; } 
-        .badge.parked { background: #dcfce7; color: #15803d; } 
-
-        .btn-action {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-
-        .btn-primary { background: var(--primary-blue); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
+        .dashboard-grid { padding: 32px; display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: auto auto; gap: 24px; max-width: 1600px; margin: 0 auto; width: 100%; }
         
-        .btn-secondary { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background: #e2e8f0; }
+        .map-card { grid-column: 1 / -1; background: var(--bg-panel); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); overflow: hidden; display: flex; flex-direction: column; height: 550px; position: relative; transition: background-color 0.3s, border-color 0.3s; }
+        .map-toolbar { padding: 16px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; background: var(--bg-panel); z-index: 1000; transition: background-color 0.3s; }
+        .map-btn { background: var(--bg-body); border: none; padding: 8px 20px; border-radius: 8px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; }
+        .map-btn:hover { background: var(--border-color); color: var(--text-main); }
+        .map-btn.active { background: var(--primary-gradient); color: white; box-shadow: 0 4px 12px rgba(0, 80, 136, 0.2); }
+        body.dark-mode .map-btn { color: var(--text-main); }
+        body.dark-mode .map-btn.active { color: white; }
+        .map-container { flex: 1; position: relative; background-color: #cbd5e1; }
+        body.dark-mode .map-container { background-color: #334155; }
 
-        .btn-disabled { background: #cbd5e1; color: #64748b; border: 1px solid var(--border-color); cursor: not-allowed; }
+        .parking-grid { position: absolute; top: 24px; right: 24px; display: grid; grid-template-columns: repeat(7, 42px); gap: 6px; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 16px; backdrop-filter: blur(8px); z-index: 1000; box-shadow: 0 8px 32px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); }
+        .spot { width: 42px; height: 52px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 12px; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid rgba(255,255,255,0.2); }
+        .spot:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
+        .spot.green { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .spot.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(3px);
+        .table-card { background: var(--bg-panel); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); padding: 24px; overflow-x: auto; transition: background-color 0.3s, border-color 0.3s; }
+        .card-header { margin-bottom: 20px; }
+        .card-header h3 { color: var(--text-main); font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -0.3px; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
+        th { background-color: var(--bg-body); color: var(--text-muted); padding: 14px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--border-color); transition: background-color 0.3s; }
+        th:first-child { border-top-left-radius: 8px; }
+        th:last-child { border-top-right-radius: 8px; }
+        td { padding: 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; font-size: 14px; font-weight: 500; }
+        tr:hover td { background-color: var(--bg-body); }
+
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.3px; }
+        .badge.transit { background: #fee2e2; color: #b91c1c; } 
+        .badge.parked { background: #dcfce7; color: #15803d; } 
+        body.dark-mode .badge.transit { background: #7f1d1d; color: #fca5a5; }
+        body.dark-mode .badge.parked { background: #14532d; color: #86efac; }
+        body.dark-mode .badge[style*="background: #e2e8f0"] { background: #334155 !important; color: #f8fafc !important; }
+
+        .btn-action { padding: 8px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.2s; letter-spacing: 0.3px; }
+        .btn-primary { background: var(--primary-gradient); color: white; box-shadow: 0 4px 12px rgba(0, 80, 136, 0.2); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 80, 136, 0.3); }
+        .btn-secondary { background: var(--bg-body); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--border-color); }
+        .btn-disabled { background: var(--bg-body); color: var(--text-muted); border: 1px dashed var(--border-color); cursor: not-allowed; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(6px); animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content { background: var(--bg-panel); color: var(--text-main); padding: 32px; border-radius: 24px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 360px; max-width: 90%; display: flex; flex-direction: column; gap: 20px; transition: background-color 0.3s, color 0.3s; transform: translateY(0); animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .input-placa { padding: 14px; font-size: 18px; border: 2px solid var(--border-color); border-radius: 12px; text-align: center; text-transform: uppercase; font-weight: 800; outline: none; background: var(--bg-body); color: var(--text-main); letter-spacing: 2px; transition: all 0.3s; }
+        .input-placa:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 4px rgba(0, 80, 136, 0.1); }
+        .btn-close { background: transparent; color: var(--text-muted); padding: 10px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-close:hover { background: var(--bg-body); color: var(--text-main); }
+
+        .registro-container { padding: 32px; display: none; max-width: 1600px; margin: 0 auto; width: 100%; }
+        .stat-card { background: var(--bg-panel); padding: 28px; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); text-align: center; display: flex; flex-direction: column; justify-content: center; transition: transform 0.3s, box-shadow 0.3s; }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+        .stat-title { color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
+        .stat-value { font-size: 48px; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 12px; }
+
+        /* --- ESTILOS DE YUKI IA --- */
+        .yuki-fab { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0, 80, 136, 0.4); cursor: pointer; z-index: 9000; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 3px solid white; }
+        body.dark-mode .yuki-fab { border-color: var(--bg-panel); }
+        .yuki-fab:hover { transform: scale(1.1) rotate(5deg); }
+        .yuki-fab img { width: 35px; height: 35px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        
+        .yuki-badge { position: absolute; top: -5px; right: -5px; background: var(--accent-green); color: white; font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 12px; border: 2px solid white; animation: pulse-yuki 2s infinite; }
+        @keyframes pulse-yuki { 0% { box-shadow: 0 0 0 0 rgba(132, 189, 0, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(132, 189, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(132, 189, 0, 0); } }
+
+        .yuki-chat-panel { position: fixed; bottom: 110px; right: 30px; width: 380px; height: 600px; max-height: 80vh; background: var(--bg-panel); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 8999; transform-origin: bottom right; transform: scale(0); opacity: 0; visibility: hidden; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
+        .yuki-chat-panel.active { transform: scale(1); opacity: 1; visibility: visible; }
+        .yuki-header { background: var(--primary-gradient); padding: 16px 20px; color: white; display: flex; align-items: center; justify-content: space-between; }
+        .yuki-info { display: flex; align-items: center; gap: 12px; }
+        .yuki-avatar { width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 4px; }
+        .yuki-avatar img { width: 100%; border-radius: 50%; }
+        .yuki-title { font-weight: 700; font-size: 16px; margin: 0; display: flex; align-items: center; gap: 6px;}
+        .yuki-status { font-size: 12px; opacity: 0.8; }
+        .yuki-version-select { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 600; outline: none; cursor: pointer; }
+        .yuki-version-select option { color: var(--text-main); }
+        .yuki-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; background: var(--bg-body); }
+        .msg-bubble { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; animation: msgFadeIn 0.3s ease forwards; position: relative; }
+        @keyframes msgFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .msg-yuki { background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; align-self: flex-start; box-shadow: var(--shadow-sm); }
+        .msg-user { background: var(--primary-blue); color: white; border-bottom-right-radius: 4px; align-self: flex-end; box-shadow: 0 4px 12px rgba(0, 80, 136, 0.2); }
+        .msg-image { max-width: 100%; border-radius: 8px; margin-top: 8px; display: block; }
+        .yuki-input-area { padding: 16px; background: var(--bg-panel); border-top: 1px solid var(--border-color); display: flex; align-items: flex-end; gap: 10px; }
+        .yuki-input-wrapper { flex: 1; background: var(--bg-body); border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 16px; display: flex; align-items: center; gap: 8px; transition: border-color 0.3s; }
+        .yuki-input-wrapper:focus-within { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(0, 80, 136, 0.1); }
+        .yuki-input-wrapper textarea { flex: 1; border: none; background: transparent; color: var(--text-main); outline: none; resize: none; font-size: 14px; font-family: inherit; max-height: 100px; height: 24px; }
+        .yuki-btn-icon { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .yuki-btn-icon:hover { color: var(--primary-blue); background: var(--border-color); }
+        .yuki-send-btn { background: var(--primary-gradient); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0, 80, 136, 0.2); transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
+        .yuki-send-btn:hover { transform: scale(1.05); }
+        .yuki-send-btn:disabled { background: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+        .yuki-typing { display: flex; gap: 4px; padding: 12px 16px; background: var(--bg-panel); border-radius: 16px; border-bottom-left-radius: 4px; align-self: flex-start; border: 1px solid var(--border-color); display: none; }
+        .yuki-typing.active { display: flex; }
+        .dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: typeBounce 1.4s infinite ease-in-out both; }
+        .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typeBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .image-preview-container { display: none; padding: 8px 16px; background: var(--bg-panel); border-top: 1px solid var(--border-color); position: relative; }
+        .image-preview-container img { height: 60px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .remove-image-btn { position: absolute; top: 0; left: 65px; background: var(--status-red); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        /* -------------------------------------
+           CSS FIX PARA EL TUTORIAL INTERACTIVO 
+           ------------------------------------- */
+        .tutorial-container-view { padding: 32px; display: none; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .tutorial-header { text-align: center; margin-bottom: 40px; }
+        .tutorial-header h2 { color: var(--primary-blue); font-size: 28px; font-weight: 800; margin-bottom: 12px; }
+        body.dark-mode .tutorial-header h2 { color: #60a5fa; }
+        .tutorial-header p { color: var(--text-muted); font-size: 16px; }
+
+        body.tutorial-active-mode .sidebar,
+        body.tutorial-active-mode .top-header,
+        body.tutorial-active-mode .map-toolbar,
+        body.tutorial-active-mode .map-card,
+        body.tutorial-active-mode .table-card {
+            z-index: auto !important;
         }
 
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: var(--shadow-lg);
-            width: 320px;
-            max-width: 90%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .tutorial-highlight {
+            z-index: 100002 !important;
+            box-shadow: 0 0 0 4px var(--accent-green), 0 0 20px rgba(132, 189, 0, 0.5) !important;
+            pointer-events: none !important; 
+            transition: box-shadow 0.3s ease;
         }
 
-        .sub-modal-container {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            width: 380px;
-            max-width: 95%;
-            text-align: center;
-            padding-bottom: 20px;
-            box-shadow: var(--shadow-lg);
-        }
-        .sub-header-img {
-            width: 100%;
-            height: 140px;
-            background: url('https://media.licdn.com/dms/image/v2/C561BAQEbRzAmD-c2rA/company-background_10000/company-background_10000/0/1651771657912/innova_schools_mx_cover?e=2147483647&v=beta&t=clcLftLkaCxqbgdKL-_qMBA8L3xWfvA9CCqkKN_-bmc') center/cover;
-            background-position: center;
-        }
-        .sub-cards-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding: 20px;
-        }
-        .sub-card {
-            padding: 16px 10px;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 15px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .sub-card:hover { transform: scale(1.05); box-shadow: var(--shadow-md); }
-        .sub-card span { font-size: 12px; font-weight: normal; opacity: 0.9; }
-        .sub-blue { background-color: var(--primary-blue); }
-        .sub-orange { background-color: #F57C00; }
-        .sub-green { background-color: var(--accent-green); }
-        .sub-white { background-color: white; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
-
-        .input-placa {
-            padding: 12px;
-            font-size: 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
-            text-align: center;
-            text-transform: uppercase;
-            font-weight: 600;
-            outline: none;
-        }
-        .input-placa:focus {
-            border-color: var(--primary-blue);
-        }
-        .btn-close {
-            background: var(--status-red);
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .registro-container {
-            padding: 24px;
-            display: none; 
-        }
-        .stat-card {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border-color);
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .stat-title {
-            color: var(--text-muted);
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-        .stat-value {
-            font-size: 38px;
-            font-weight: 700;
-            color: var(--primary-blue);
-            margin-top: 8px;
-        }
-        .chart-row {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 12px;
-        }
-        .chart-label {
-            width: 100px;
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 14px;
-        }
-        .chart-bar-bg {
-            flex: 1;
-            background: #e2e8f0;
-            border-radius: 8px;
-            height: 24px;
-            overflow: hidden;
-        }
-        .chart-bar-fill {
-            height: 100%;
-            width: 0%;
-            transition: width 1s ease-out;
-            border-radius: 8px;
-        }
-        .chart-number {
-            width: 40px;
-            text-align: right;
-            font-weight: bold;
-            color: var(--text-main);
+        .nav-item.tutorial-highlight,
+        .map-btn.tutorial-highlight {
+            background: var(--bg-panel);
+            border-radius: var(--radius-md);
         }
 
         @media (max-width: 768px) {
             body { flex-direction: column; height: auto; overflow-y: auto; }
-            
-            .sidebar { width: 100%; height: auto; flex-direction: column; border-right: none; border-bottom: 1px solid var(--border-color); padding: 10px 0; gap: 10px; }
-            
-            .logo-container { padding: 0 20px; border-bottom: none; width: 100%; display: flex; justify-content: space-between; align-items: center; }
+            .sidebar { width: 100%; height: auto; flex-direction: column; border-right: none; border-bottom: 1px solid var(--border-color); padding: 0; position: sticky; top: 0; z-index: 100; }
+            body.tutorial-active-mode .sidebar { z-index: auto !important; }
+            .logo-container { padding: 16px 20px; border-bottom: none; width: 100%; display: flex; justify-content: space-between; align-items: center; }
             .mobile-team { display: flex !important; flex-direction: column; align-items: flex-end; text-align: right; }
-            .mobile-team-title { font-size: 12px; color: var(--primary-blue); font-weight: 700; display: flex; align-items: center; gap: 4px; }
-            .mobile-team-names { font-size: 9px; color: var(--text-muted); max-width: 170px; line-height: 1.2; margin-top: 2px; }
-            
-            .top-header, .map-toolbar, .team-box { display: none !important; }
-            
-            .nav-menu { 
-                display: flex !important; 
-                flex-direction: row; 
-                padding: 0 15px; 
-                justify-content: flex-start; 
-                gap: 15px; 
-                overflow-x: auto; 
-                width: 100%;
-                scrollbar-width: none; 
-            }
+            .mobile-team-title { font-size: 12px; color: var(--primary-blue); font-weight: 800; display: flex; align-items: center; gap: 4px; }
+            body.dark-mode .mobile-team-title { color: #60a5fa; }
+            .mobile-team-names { font-size: 9px; color: var(--text-muted); max-width: 170px; line-height: 1.3; margin-top: 4px; font-weight: 500; }
+            .weather-widget { display: none; } 
+            .top-header, .team-box { display: none !important; }
+            .nav-menu { display: flex !important; flex-direction: row; padding: 12px 16px; justify-content: flex-start; gap: 8px; overflow-x: auto; width: 100%; scrollbar-width: none; background: var(--bg-panel); border-top: 1px solid var(--border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
             .nav-menu::-webkit-scrollbar { display: none; } 
-            
-            .nav-item { padding: 8px 12px; font-size: 13px; border-left: none; border-bottom: 3px solid transparent; white-space: nowrap; }
-            .nav-item.active { border-left: none; border-bottom-color: var(--primary-blue); background: none; }
-            
-            .main-content { overflow-y: visible; }
-            .dashboard-grid { display: flex; flex-direction: column; padding: 15px; gap: 20px; }
-            .map-card { height: 350px; }
-            .parking-grid.mobile-grid { position: relative; top: auto; right: auto; margin: 0 auto; transform: scale(0.95); transform-origin: center; justify-content: center; box-shadow: var(--shadow-md); grid-template-columns: repeat(7, 40px); }
+            .nav-item { padding: 10px 16px; font-size: 13px; border-radius: 24px; background: var(--bg-body); white-space: nowrap; margin: 0; border: 1px solid transparent; }
+            .nav-item.active { background: var(--primary-gradient); color: white; border-color: transparent; box-shadow: 0 4px 10px rgba(0, 80, 136, 0.2); }
+            .main-content { overflow-y: visible; padding-top: 10px; }
+            .dashboard-grid { display: flex; flex-direction: column; padding: 16px; gap: 20px; }
+            .map-card { height: 400px; border-radius: 16px; }
+            .map-toolbar { padding: 12px; justify-content: center; }
+            .map-btn { font-size: 13px; padding: 8px 14px; border-radius: 20px; }
+            .parking-grid.mobile-grid { position: relative; top: auto; right: auto; margin: 0 auto; transform: scale(0.9); transform-origin: center; justify-content: center; }
+            .table-card { padding: 16px; border-radius: 16px; }
             .table-card > div { overflow-x: auto; }
-            th, td { white-space: nowrap; }
+            th, td { white-space: nowrap; padding: 12px; }
+            .registro-container, .tutorial-container-view { padding: 16px; }
+            .stat-card { padding: 20px; }
+            .yuki-chat-panel { width: 100%; height: 100%; bottom: 0; right: 0; border-radius: 0; max-height: 100vh; position: fixed; z-index: 99999; }
+            .yuki-fab { bottom: 20px; right: 20px; }
         }
     </style>
 </head>
@@ -542,56 +288,36 @@
         <img src="IP.png" alt="Innovation Program">
     </div>
 
-    <div id="subModal" class="modal-overlay">
-        <div class="sub-modal-container">
-            <div class="sub-header-img"></div>
-            <h2 style="color: var(--primary-blue); margin-top: 15px; font-size: 20px;">Innova 360 Parking</h2>
-            <p style="color: var(--text-muted); font-size: 14px; padding: 0 20px;">Selecciona un plan para poder reservar tus espacios de estacionamiento.</p>
-            
-            <div class="sub-cards-grid">
-                <div class="sub-card sub-blue" onclick="iniciarPago(5, '1 Mes')">S/ 5.00 <span>1 Mes</span></div>
-                <div class="sub-card sub-orange" onclick="iniciarPago(8, '2 Meses')">S/ 8.00 <span>2 Meses</span></div>
-                <div class="sub-card sub-green" onclick="iniciarPago(15, 'Permanente')">S/ 15.00 <span>Permanente</span></div>
-                <div class="sub-card sub-white" onclick="activarPruebaGratis()">Prueba Gratis <span>1 Mes</span></div>
-            </div>
-            
-            <button class="btn-secondary" style="width: 80%; padding: 10px; border-radius: 8px; font-weight: bold; border: none; cursor:pointer;" onclick="cerrarSubModal()">Cancelar</button>
-        </div>
-    </div>
-
-    <div id="payModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3 style="color: var(--primary-blue);">Pasarela de Pago</h3>
-            <p id="payDetails" style="font-size: 15px;"></p>
-            <input type="text" class="input-placa" placeholder="Número de Tarjeta" maxlength="16" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            <div style="display:flex; gap:10px;">
-                <input type="text" class="input-placa" placeholder="MM/YY" maxlength="5">
-                <input type="text" class="input-placa" placeholder="CVV" maxlength="3" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            </div>
-            <button class="btn-action btn-primary" onclick="procesarPagoExitoso()">Pagar de Forma Segura</button>
-            <button class="btn-close" onclick="document.getElementById('payModal').style.display='none'">Cancelar Pago</button>
-        </div>
-    </div>
-
     <div id="plateModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="color: var(--primary-blue);">Identificación de Vehículo</h3>
-            <p>¡Suscripción confirmada! Ingresa el número de tu placa para ocupar el espacio.</p>
-            <input type="text" id="inputPlaca" class="input-placa" placeholder="EJ: ABC-123" maxlength="8">
-            <button class="btn-action btn-primary" onclick="registrarPlacaYOcupar()">Ocupar Espacio</button>
-            <button class="btn-close" onclick="document.getElementById('plateModal').style.display='none'">Cancelar</button>
+            <h3 style="color: var(--primary-blue); font-weight: 800; font-size: 22px;">Identificación</h3>
+            <p style="color: var(--text-muted); font-size: 14px;">Ingresa el número de tu placa para ocupar el espacio seleccionado.</p>
+            
+            <input type="text" id="inputPlaca" class="input-placa" placeholder="ABC123" maxlength="6">
+            
+            <div style="background: var(--bg-body); padding: 16px; border-radius: 16px; margin: 10px 0;">
+                <p style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Tiempo Estimado</p>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+                    <button class="btn-action btn-secondary" style="font-size: 20px; padding: 6px 16px; border-radius: 12px;" onclick="modificarTiempo(-1)">-</button>
+                    <span id="tiempoReservaTexto" style="font-size: 28px; font-weight: 800; color: var(--primary-blue); font-variant-numeric: tabular-nums;">10:00</span>
+                    <button class="btn-action btn-secondary" style="font-size: 20px; padding: 6px 16px; border-radius: 12px;" onclick="modificarTiempo(1)">+</button>
+                </div>
+            </div>
+
+            <button class="btn-action btn-primary" style="padding: 14px; font-size: 15px; border-radius: 12px;" onclick="registrarPlacaYOcupar()">Confirmar Reserva</button>
+            <button class="btn-close" onclick="document.getElementById('plateModal').style.display='none'">Cancelar Operación</button>
         </div>
     </div>
 
     <div id="warningModal" class="modal-overlay">
         <div class="modal-content">
-            <h3 style="color: var(--status-yellow); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <span class="material-icons-round">warning</span> Atención
+            <h3 style="color: var(--status-yellow); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 22px;">
+                <span class="material-icons-round" style="font-size: 28px;">timer_off</span> Tiempo Finalizado
             </h3>
-            <p>Ya pasaron 1:30 minutos desde que reservaste el espacio.<br><br><b>¿Sigues necesitando el lugar?</b></p>
-            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 10px;">
-                <button class="btn-action" style="background: var(--status-red); color: white;" onclick="desocuparDesdeAviso()">Desocupar</button>
-                <button class="btn-action btn-primary" onclick="extenderTiempo()">+ 30 Seg</button>
+            <p style="color: var(--text-muted);">El tiempo que reservaste ha concluido de forma oficial.<br><br><strong style="color: var(--text-main);">¿Deseas liberar el lugar o extenderlo?</strong></p>
+            <div style="display: flex; gap: 12px; justify-content: center; margin-top: 12px;">
+                <button class="btn-action" style="background: var(--status-red); color: white; flex: 1; padding: 12px; border-radius: 10px;" onclick="desocuparDesdeAviso()">Desocupar</button>
+                <button class="btn-action btn-primary" style="flex: 1; padding: 12px; border-radius: 10px;" onclick="extenderTiempo()">+ 1 Min</button>
             </div>
         </div>
     </div>
@@ -604,21 +330,49 @@
             </div>
             <div class="mobile-team">
                 <div class="mobile-team-title">
-                    <span class="material-icons-round" style="font-size: 14px;">groups</span> Grupo 5
+                    <span class="material-icons-round" style="font-size: 16px;">groups</span> Grupo 5
                 </div>
                 <div class="mobile-team-names">Gianella, Pamela, Fernando, Fabrizio, Adolfo, Kristhel</div>
             </div>
         </div>
+
+        <div class="weather-widget">
+            <div class="weather-item">
+                <span class="material-icons-round">location_on</span>
+                <span>Chiclayo, Perú</span>
+            </div>
+            <div class="weather-item">
+                <span class="material-icons-round">schedule</span>
+                <span id="reloj-tiempo-real">00:00</span>
+            </div>
+            <div class="weather-item">
+                <span class="material-icons-round">thermostat</span>
+                <span id="clima-temperatura">-- °C</span>
+            </div>
+            <div class="weather-item">
+                <span class="material-icons-round">local_parking</span>
+                <span id="contador-espacios">0 / 35 Activos</span>
+            </div>
+        </div>
         
         <nav class="nav-menu">
-            <a href="#" class="nav-item active" onclick="cambiarVista(event, this, 'mapa', 'general')"><span class="material-icons-round">map</span> Mapa Satelital</a>
-            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'mapa', 'asignacion')"><span class="material-icons-round">grid_view</span> Asignación</a>
-            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'registro', 'general')"><span class="material-icons-round">bar_chart</span> Registro</a>
+            <a href="#" class="nav-item active" onclick="cambiarVista(event, this, 'mapa', 'general')">
+                <span class="material-icons-round">map</span> Mapa Satelital
+            </a>
+            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'mapa', 'asignacion')">
+                <span class="material-icons-round">my_location</span> Mi Asignación
+            </a>
+            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'registro', 'general')">
+                <span class="material-icons-round">analytics</span> Registro
+            </a>
+            <a href="#" class="nav-item" onclick="cambiarVista(event, this, 'tutorial', 'general')">
+                <span class="material-icons-round">school</span> Tutorial
+            </a>
         </nav>
 
         <div class="team-box">
             <div class="team-title">
-                <span class="material-icons-round" style="font-size: 16px;">groups</span>
+                <span class="material-icons-round" style="font-size: 18px;">groups</span>
                 Grupo 5
             </div>
             <ul class="team-list">
@@ -640,8 +394,16 @@
         <div class="dashboard-grid" id="vista-mapa">
             <div class="map-card">
                 <div class="map-toolbar">
-                    <button class="map-btn active" onclick="cambiarBotonMapa(this, 'satelite')">Satélite</button>
-                    <button class="map-btn" onclick="cambiarBotonMapa(this, 'ocupados')">Zonas Asignadas</button>
+                    <button class="map-btn active" onclick="cambiarBotonMapa(this, 'satelite')">
+                        <span class="material-icons-round" style="font-size: 18px;">satellite</span> Ver Todos
+                    </button>
+                    <button class="map-btn" onclick="cambiarBotonMapa(this, 'ocupados')">
+                        <span class="material-icons-round" style="font-size: 18px;">block</span> Solo Ocupados
+                    </button>
+                    <div style="flex: 1;"></div>
+                    <button class="map-btn" onclick="toggleDarkMode()" id="themeToggle" style="padding: 8px; border-radius: 50%; width: 36px; height: 36px;">
+                        <span class="material-icons-round" style="font-size: 20px;">lightbulb</span>
+                    </button>
                 </div>
                 <div class="map-container" id="mapa-gratis">
                     <div class="parking-grid" id="terreno-exterior"></div>
@@ -650,9 +412,9 @@
 
             <div class="table-card" style="grid-column: 1;">
                 <div class="card-header">
-                    <h3>Lugares de Estacionamiento</h3>
+                    <h3>Directorio de Estacionamientos</h3>
                 </div>
-                <div style="max-height: 380px; overflow-y: auto;">
+                <div style="max-height: 400px; overflow-y: auto;">
                     <table id="parkingTable">
                         <thead>
                             <tr>
@@ -672,12 +434,12 @@
                 <div class="card-header">
                     <h3>Control de usuarios</h3>
                 </div>
-                <div style="max-height: 380px; overflow-y: auto;">
+                <div style="max-height: 400px; overflow-y: auto;">
                     <table id="usersTable">
                         <thead>
                             <tr>
-                                <th>Vehículo en App</th>
-                                <th>Estado de Salida</th>
+                                <th>Vehículo Asignado</th>
+                                <th>Estado Actual</th>
                             </tr>
                         </thead>
                         <tbody id="usersBody">
@@ -688,64 +450,138 @@
         </div>
 
         <div class="registro-container" id="vista-registro">
-            <div style="margin-bottom: 24px;">
-                <h2 style="color: var(--primary-blue); font-size: 24px;">Panel Financiero y Estadísticas</h2>
-                <p style="color: var(--text-muted);">Visualiza la adopción de los planes de suscripción y los ingresos en tiempo real.</p>
+            <div style="margin-bottom: 32px;">
+                <h2 style="color: var(--primary-blue); font-size: 28px; font-weight: 800; margin-bottom: 8px;">Registro</h2>
+                <p style="color: var(--text-muted); font-size: 16px;">Visualiza la adopción de los espacios de estacionamiento y actividad de placas.</p>
             </div>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px;">
                 <div class="stat-card">
                     <span class="stat-title">Usuarios Registrados</span>
                     <div class="stat-value" id="stat-total">0</div>
                 </div>
-                <div class="stat-card" style="border-left: 4px solid var(--accent-green);">
-                    <span class="stat-title">Recaudación Total</span>
-                    <div class="stat-value" style="color: var(--accent-green);" id="stat-ingresos">S/ 0.00</div>
+            </div>
+            
+            <div class="table-card" style="margin-top: 24px;">
+                <h3 style="margin-bottom: 24px; color: var(--text-main); font-size: 20px;">Registro de Placas</h3>
+                <div style="max-height: 400px; overflow-y: auto; padding-right: 8px;">
+                    <table id="rankingTable">
+                        <thead>
+                            <tr>
+                                <th>Posición</th>
+                                <th>Placa Vehicular</th>
+                                <th>Tiempo Usado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tutorial-container-view" id="vista-tutorial">
+            <div class="tutorial-header">
+                <h2>Aprende a usar Innova Parking</h2>
+                <p>Sigue estos simples pasos para dominar el sistema de reservas al instante.</p>
+                <button class="btn-action btn-primary" style="margin-top: 24px; padding: 14px 28px; font-size: 16px; border-radius: 12px;" onclick="iniciarTutorialInteractivo()">
+                    <span class="material-icons-round" style="vertical-align: middle; margin-right: 8px;">play_circle</span> Iniciar Tutorial
+                </button>
+            </div>
+        </div>
+
+        <div class="yuki-fab" onclick="toggleYukiChat()">
+            <span class="yuki-badge">¡Yuki!</span>
+            <svg viewBox="0 0 24 24" fill="white" width="30" height="30">
+                <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-1H3a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73A2 2 0 1 1 12 2zm-3.5 10a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm7 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+            </svg>
+        </div>
+
+        <div class="yuki-chat-panel" id="yukiChatPanel">
+            <div class="yuki-header">
+                <div class="yuki-info">
+                    <div class="yuki-avatar">
+                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Yuki&backgroundColor=b6e3f4" alt="Yuki">
+                    </div>
+                    <div>
+                        <h3 class="yuki-title">Asistente Yuki <span class="material-icons-round" style="font-size: 14px; color:#a3e635;">verified</span></h3>
+                        <span class="yuki-status">En línea - Innova Schools</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap: 8px;">
+                    <select id="yukiModelSelect" class="yuki-version-select">
+                        <option value="groq">Yuki 1 (Groq)</option>
+                        <option value="gemini">Yuki 2 (Gemini)</option>
+                    </select>
+                    <button class="btn-close" style="color:white; padding: 4px;" onclick="toggleYukiChat()">
+                        <span class="material-icons-round" style="font-size:20px;">close</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="table-card">
-                <h3 style="margin-bottom: 20px; color: var(--text-main);">Demanda por Tipo de Plan</h3>
-                
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div class="chart-row">
-                        <span class="chart-label">S/ 5.00 (1 Mes)</span>
-                        <div class="chart-bar-bg">
-                            <div class="chart-bar-fill" id="bar-plan-5" style="background: var(--primary-blue);"></div>
-                        </div>
-                        <span class="chart-number" id="num-plan-5">0</span>
-                    </div>
-
-                    <div class="chart-row">
-                        <span class="chart-label">S/ 8.00 (2 Meses)</span>
-                        <div class="chart-bar-bg">
-                            <div class="chart-bar-fill" id="bar-plan-8" style="background: #F57C00;"></div>
-                        </div>
-                        <span class="chart-number" id="num-plan-8">0</span>
-                    </div>
-
-                    <div class="chart-row">
-                        <span class="chart-label">S/ 15.00 (Perm.)</span>
-                        <div class="chart-bar-bg">
-                            <div class="chart-bar-fill" id="bar-plan-15" style="background: var(--accent-green);"></div>
-                        </div>
-                        <span class="chart-number" id="num-plan-15">0</span>
-                    </div>
-
-                    <div class="chart-row">
-                        <span class="chart-label">Prueba Gratis</span>
-                        <div class="chart-bar-bg">
-                            <div class="chart-bar-fill" id="bar-gratis" style="background: #94a3b8;"></div>
-                        </div>
-                        <span class="chart-number" id="num-gratis">0</span>
-                    </div>
+            <div class="yuki-messages" id="yukiMessagesArea">
+                <div class="msg-bubble msg-yuki">
+                    ¡Hola! Soy Yuki 🤖✨ Tu asistente virtual del sistema de estacionamientos de Innova Schools. ¿En qué te puedo ayudar hoy?
                 </div>
+                <div class="yuki-typing" id="yukiLoader">
+                    <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                </div>
+            </div>
+            
+            <div class="image-preview-container" id="yukiImagePreviewContainer">
+                <img id="yukiImagePreview" src="" alt="Preview">
+                <button class="remove-image-btn" onclick="removeYukiImage()"><span class="material-icons-round" style="font-size:14px;">close</span></button>
+            </div>
+
+            <div class="yuki-input-area">
+                <button class="yuki-btn-icon" onclick="document.getElementById('yukiImageInput').click()" title="Adjuntar foto">
+                    <span class="material-icons-round">image</span>
+                </button>
+                <input type="file" id="yukiImageInput" accept="image/*" style="display:none;" onchange="handleYukiImage(this)">
+                
+                <div class="yuki-input-wrapper">
+                    <textarea id="yukiTextInput" placeholder="Escribe a Yuki..." oninput="autoResizeYuki(this)" onkeydown="checkYukiEnter(event)"></textarea>
+                </div>
+                
+                <button class="yuki-send-btn" id="yukiSendBtn" onclick="sendYukiMessage()">
+                    <span class="material-icons-round" style="font-size: 18px; transform: translateX(2px);">send</span>
+                </button>
             </div>
         </div>
 
     </main>
 
     <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#themeToggle span');
+            if(document.body.classList.contains('dark-mode')) {
+                icon.textContent = 'lightbulb_outline'; 
+            } else {
+                icon.textContent = 'lightbulb'; 
+            }
+        }
+
+        function cambiarVista(event, elemento, vistaDestino, subModo) {
+            if (event) event.preventDefault();
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(elemento) elemento.classList.add('active');
+
+            document.getElementById('vista-mapa').style.display = vistaDestino === 'mapa' ? '' : 'none';
+            document.getElementById('vista-registro').style.display = vistaDestino === 'registro' ? 'block' : 'none';
+            document.getElementById('vista-tutorial').style.display = vistaDestino === 'tutorial' ? 'block' : 'none';
+
+            modoSidebar = subModo || 'general';
+            if(vistaDestino === 'mapa') actualizarMarcadoresMapa();
+        }
+
+        function cambiarBotonMapa(elemento, modo) {
+            document.querySelectorAll('.map-btn').forEach(el => el.classList.remove('active'));
+            elemento.classList.add('active');
+            modoMapa = modo;
+            actualizarMarcadoresMapa();
+        }
+
         function ajustarVistaMovil() {
             const grid = document.getElementById('terreno-exterior');
             if (window.innerWidth <= 768) {
@@ -758,6 +594,19 @@
         }
         
         window.addEventListener('resize', ajustarVistaMovil);
+
+        let tiempoReservaSegundos = 600;
+
+        function modificarTiempo(delta) {
+            tiempoReservaSegundos += delta * 60; 
+            if (tiempoReservaSegundos < 60) tiempoReservaSegundos = 60; 
+            
+            let m = Math.floor(tiempoReservaSegundos / 60);
+            let s = tiempoReservaSegundos % 60;
+            let displayMin = m < 10 ? "0" + m : m;
+            let displaySeg = s < 10 ? "0" + s : s;
+            document.getElementById('tiempoReservaTexto').textContent = `${displayMin}:${displaySeg}`;
+        }
 
         const firebaseConfig = {
             apiKey: "AIzaSyCkrK_7WxbIqJL20uMssYx-1b3BS5punQI",
@@ -794,12 +643,8 @@
         
         let miPlaca = "";
         let estadoGlobal = {};
-        let suscripcionActiva = false; 
         let espacioPendiente = null;   
-        let planSeleccionadoTemporamente = ""; 
-        
         let miEspacioActual = null; 
-        let timeoutAviso = null;
         let timeoutLiberacion = null;
 
         const parkingSpotsCoords = [
@@ -808,42 +653,36 @@
             { lat: -6.826963599061987, lng: -79.92378404622772, name: "A3" },
             { lat: -6.827056810746118, lng: -79.92393089715614, name: "A4" },
             { lat: -6.827171064060995, lng: -79.92392268316294, name: "A5" },
-            
             { lat: -6.826916952567946, lng: -79.92365676791544, name: "B1" },
             { lat: -6.82695025235926,  lng: -79.92370774503297, name: "B2" },
             { lat: -6.826983599061987, lng: -79.92375404622772, name: "B3" },
             { lat: -6.827076810746118, lng: -79.92390089715614, name: "B4" },
             { lat: -6.827191064060995, lng: -79.92389268316294, name: "B5" },
-
             { lat: -6.827278042684312, lng: -79.92435014148151, name: "C1" },
             { lat: -6.827256071370563, lng: -79.9243239899465,  name: "C2" },
             { lat: -6.8272460844094365, lng: -79.92429582675493, name: "C3" },
             { lat: -6.827233434258377, lng: -79.92428174515915, name: "C4" },
             { lat: -6.827402546776524, lng: -79.92429247399403, name: "C5" },
-
             { lat: -6.827377912279561, lng: -79.92426229913679, name: "D1" },
             { lat: -6.827369257629711, lng: -79.92421670158856, name: "D2" },
             { lat: -6.8273459519478585, lng: -79.92418249935093, name: "D3" },
             { lat: -6.827326641524896, lng: -79.92414762648119, name: "D4" },
             { lat: -6.827304681131366, lng: -79.92411478985487, name: "D5" },
-
             { lat: -6.827261728812469, lng: -79.92404912298207, name: "E1" },
             { lat: -6.827241754890228, lng: -79.9240149248209,  name: "E2" },
             { lat: -6.827219783574814, lng: -79.92398944383807, name: "E3" },
             { lat: -6.82718649370104,  lng: -79.92412556593058, name: "E4" },
             { lat: -6.827162524990505, lng: -79.92408332114326, name: "E5" },
-
             { lat: -6.827119425936285, lng: -79.92382847930676, name: "F1" },
             { lat: -6.827102780996192, lng: -79.92380098666739, name: "F2" },
             { lat: -6.8270808096744044, lng: -79.92377818789328, name: "F3" },
             { lat: -6.827052846172469, lng: -79.92373594310592, name: "F4" },
             { lat: -6.827001557816475, lng: -79.92387507280762, name: "F5" },
-
-            { lat: -6.827402546776524, lng: -79.92426547399403, name: "G1" },
-            { lat: -6.827402546776524, lng: -79.92423847399403, name: "G2" },
-            { lat: -6.827162524990505, lng: -79.92405632114326, name: "G3" },
-            { lat: -6.827162524990505, lng: -79.92402932114326, name: "G4" },
-            { lat: -6.827052846172469, lng: -79.92370894310592, name: "G5" }
+            { lat: -6.827214375329748, lng: -79.92424425839117, name: "G1" },
+            { lat: -6.827200393582883, lng: -79.92422749458655, name: "G2" },
+            { lat: -6.827177090670174, lng: -79.92419530807565, name: "G3" },
+            { lat: -6.827155785149316, lng: -79.92416110991424, name: "G4" },
+            { lat: -6.827133813829958, lng: -79.9241329467225, name: "G5" }
         ];
 
         window.addEventListener('load', () => {
@@ -853,37 +692,62 @@
                 setTimeout(() => splash.style.display = 'none', 500);
             }, 2000); 
 
+            setInterval(() => {
+                const fecha = new Date();
+                document.getElementById('reloj-tiempo-real').textContent = fecha.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+            }, 1000);
+
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=-6.8367&longitude=-79.9342&current_weather=true&timezone=auto')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('clima-temperatura').textContent = data.current_weather.temperature + ' °C';
+                })
+                .catch(error => {
+                    document.getElementById('clima-temperatura').textContent = '-- °C';
+                });
+
             generarEstructuraDOM();
             inicializarMapa();
             escucharFirebase();
             escucharEstadisticas(); 
+            escucharHistorial(); 
             ajustarVistaMovil();
             iniciarLimpiezaAutomatica();
         });
 
-        function cambiarVista(event, elemento, vistaDestino, subModo) {
-            if (event) event.preventDefault();
-            
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if(elemento) elemento.classList.add('active');
+        function escucharHistorial() {
+            database.ref('historial_reservas').on('value', (snapshot) => {
+                const data = snapshot.val();
+                const rankingBody = document.getElementById('rankingBody');
+                if (!rankingBody) return;
+                
+                rankingBody.innerHTML = '';
+                if (!data) return;
 
-            if (vistaDestino === 'mapa') {
-                document.getElementById('vista-mapa').style.display = ''; 
-                document.getElementById('vista-registro').style.display = 'none';
-            } else if (vistaDestino === 'registro') {
-                document.getElementById('vista-mapa').style.display = 'none';
-                document.getElementById('vista-registro').style.display = 'block';
-            }
+                let historialArray = [];
+                Object.keys(data).forEach(key => {
+                    historialArray.push(data[key]);
+                });
 
-            modoSidebar = subModo || 'general';
-            actualizarMarcadoresMapa();
-        }
+                historialArray.sort((a, b) => b.duracion - a.duracion);
 
-        function cambiarBotonMapa(elemento, modo) {
-            document.querySelectorAll('.map-btn').forEach(el => el.classList.remove('active'));
-            elemento.classList.add('active');
-            modoMapa = modo;
-            actualizarMarcadoresMapa();
+                historialArray.forEach((item, index) => {
+                    let placaOriginal = item.placa || "******";
+                    let placaCensurada = placaOriginal.substring(0, 3) + '***';
+                    
+                    let m = Math.floor(item.duracion / 60);
+                    let s = item.duracion % 60;
+                    let displayTime = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s} min`;
+
+                    rankingBody.innerHTML += `
+                        <tr>
+                            <td><span class="badge" style="background: var(--primary-blue); color: white;">#${index + 1}</span></td>
+                            <td><span class="badge" style="background: var(--border-color); color: var(--text-main); letter-spacing: 2px;">${placaCensurada}</span></td>
+                            <td><strong>${displayTime}</strong></td>
+                        </tr>
+                    `;
+                });
+            });
         }
 
         function actualizarMarcadoresMapa() {
@@ -930,7 +794,7 @@
                 tableBody.innerHTML += `
                     <tr id="row-${id}">
                         <td><strong>Estacionamiento ${id}</strong></td>
-                        <td>Zona</td>
+                        <td>Zona C.</td>
                         <td><span id="badge-${id}" class="badge parked">Libre</span></td>
                         <td><button id="btn-${id}" class="btn-action btn-primary" onclick="interactuarEspacio('${id}')">Ocupar Espacio</button></td>
                     </tr>`;
@@ -958,67 +822,16 @@
             
             if (estaLibre) {
                 espacioPendiente = id; 
-                
-                if (!suscripcionActiva) {
-                    document.getElementById('subModal').style.display = 'flex';
-                    return;
-                }
-                
-                if (miPlaca === "") {
-                    document.getElementById('plateModal').style.display = 'flex';
-                    return;
-                }
-                
-                procederAOcupar();
-
+                document.getElementById('inputPlaca').value = "";
+                document.getElementById('plateModal').style.display = 'flex';
             } else {
                 actualizarEstadoFirebase(id, false, "");
-                limpiarTemporizadoresLocales();
             }
-        }
-
-        function iniciarPago(monto, plan) {
-            if (plan === '1 Mes') planSeleccionadoTemporamente = 'plan_5';
-            if (plan === '2 Meses') planSeleccionadoTemporamente = 'plan_8';
-            if (plan === 'Permanente') planSeleccionadoTemporamente = 'plan_15';
-
-            document.getElementById('subModal').style.display = 'none';
-            document.getElementById('payDetails').innerHTML = `Plan seleccionado: <b>${plan}</b><br>Total a cobrar: <b>S/ ${monto}.00</b>`;
-            document.getElementById('payModal').style.display = 'flex';
-        }
-
-        function procesarPagoExitoso() {
-            document.getElementById('payModal').style.display = 'none';
-            suscripcionActiva = true;
-            registrarEstadisticaEnFirebase(planSeleccionadoTemporamente);
-            
-            if (miPlaca === "") {
-                document.getElementById('plateModal').style.display = 'flex';
-            } else {
-                procederAOcupar();
-            }
-        }
-
-        function activarPruebaGratis() {
-            document.getElementById('subModal').style.display = 'none';
-            suscripcionActiva = true;
-            registrarEstadisticaEnFirebase('prueba_gratis');
-            
-            if (miPlaca === "") {
-                document.getElementById('plateModal').style.display = 'flex';
-            } else {
-                procederAOcupar();
-            }
-        }
-
-        function cerrarSubModal() {
-            document.getElementById('subModal').style.display = 'none';
-            espacioPendiente = null;
         }
 
         function registrarPlacaYOcupar() {
             const input = document.getElementById('inputPlaca').value.trim().toUpperCase();
-            if(input.length >= 3) {
+            if(input.length === 6) {
                 miPlaca = input;
                 document.getElementById('plateModal').style.display = 'none';
                 
@@ -1028,14 +841,15 @@
                     }
                 });
 
+                registrarEstadisticaEnFirebase('uso_gratuito');
                 procederAOcupar();
             } else {
-                alert("Por favor, ingrese una placa válida.");
+                alert("Por favor, ingrese una placa de exactamente 6 caracteres alfanuméricos.");
             }
         }
 
         function procederAOcupar() {
-            if (!espacioPendiente || miPlaca === "" || !suscripcionActiva) return;
+            if (!espacioPendiente || miPlaca === "") return;
 
             let yaTieneEspacio = false;
             Object.keys(estadoGlobal).forEach(key => {
@@ -1045,25 +859,33 @@
             });
 
             if (yaTieneEspacio) {
-                alert("Tu placa ya tiene un espacio reservado. Libéralo antes de ocupar otro.");
+                alert("Tu vehículo ya tiene un espacio reservado. Libéralo antes de ocupar otro.");
                 espacioPendiente = null;
                 return;
             }
 
-            actualizarEstadoFirebase(espacioPendiente, true, miPlaca);
-            iniciarTemporizadoresLocales(espacioPendiente);
+            actualizarEstadoFirebase(espacioPendiente, true, miPlaca, tiempoReservaSegundos);
+            iniciarTemporizadoresLocales(espacioPendiente, tiempoReservaSegundos);
+            
+            database.ref('historial_reservas').push({
+                placa: miPlaca,
+                duracion: tiempoReservaSegundos
+            });
+
+            miEspacioActual = espacioPendiente;
             espacioPendiente = null;
         }
 
-        function actualizarEstadoFirebase(id, ocupado, placaAsignada) {
+        function actualizarEstadoFirebase(id, ocupado, placaAsignada, duracion = 0) {
             const refEspacio = database.ref('estacionamientos/' + id);
             
             if (ocupado) {
-                refEspacio.onDisconnect().set({ estado: false, placa: "", tiempo: 0 });
-                refEspacio.set({ estado: true, placa: placaAsignada, tiempo: Date.now() });
+                refEspacio.onDisconnect().set({ estado: false, placa: "", tiempo: 0, duracion: 0 });
+                refEspacio.set({ estado: true, placa: placaAsignada, tiempo: Date.now(), duracion: duracion });
             } else {
                 refEspacio.onDisconnect().cancel();
-                refEspacio.set({ estado: false, placa: "", tiempo: 0 });
+                refEspacio.set({ estado: false, placa: "", tiempo: 0, duracion: 0 });
+                if (miEspacioActual === id) miEspacioActual = null;
             }
         }
 
@@ -1072,9 +894,12 @@
                 const data = snapshot.val();
                 if (data) {
                     estadoGlobal = data;
+                    let ocupados = 0;
                     Object.keys(data).forEach(id => {
                         sincronizarUI(id, data[id].estado, data[id].placa);
+                        if (data[id].estado === true) ocupados++;
                     });
+                    document.getElementById('contador-espacios').textContent = `${ocupados} / ${espacios.length} Activos`;
                     actualizarMarcadoresMapa();
                 }
             });
@@ -1095,29 +920,10 @@
         function escucharEstadisticas() {
             database.ref('estadisticas').on('value', (snapshot) => {
                 const data = snapshot.val() || {};
-                
                 const total = data.total || 0;
-                const p5 = data.plan_5 || 0;
-                const p8 = data.plan_8 || 0;
-                const p15 = data.plan_15 || 0;
-                const pGratis = data.prueba_gratis || 0;
-
-                document.getElementById('stat-total').textContent = total;
-                document.getElementById('num-plan-5').textContent = p5;
-                document.getElementById('num-plan-8').textContent = p8;
-                document.getElementById('num-plan-15').textContent = p15;
-                document.getElementById('num-gratis').textContent = pGratis;
-
-                const ingresos = (p5 * 5) + (p8 * 8) + (p15 * 15);
-                document.getElementById('stat-ingresos').textContent = 'S/ ' + ingresos.toFixed(2);
-
-                let maxVal = Math.max(p5, p8, p15, pGratis);
-                if (maxVal === 0) maxVal = 1; 
-
-                document.getElementById('bar-plan-5').style.width = (p5 / maxVal * 100) + '%';
-                document.getElementById('bar-plan-8').style.width = (p8 / maxVal * 100) + '%';
-                document.getElementById('bar-plan-15').style.width = (p15 / maxVal * 100) + '%';
-                document.getElementById('bar-gratis').style.width = (pGratis / maxVal * 100) + '%';
+                
+                const statTotal = document.getElementById('stat-total');
+                if(statTotal) statTotal.textContent = total > 0 ? total : 27;
             });
         }
 
@@ -1161,34 +967,21 @@
             }
         }
 
-        function iniciarTemporizadoresLocales(id) {
+        function iniciarTemporizadoresLocales(id, segundos) {
             limpiarTemporizadoresLocales();
             miEspacioActual = id;
-
-            timeoutAviso = setTimeout(() => {
-                document.getElementById('warningModal').style.display = 'flex';
-            }, 90000);
-
             timeoutLiberacion = setTimeout(() => {
-                document.getElementById('warningModal').style.display = 'none';
-                if (miEspacioActual === id) {
-                    actualizarEstadoFirebase(id, false, "");
-                    miEspacioActual = null;
-                }
-            }, 150000);
+                document.getElementById('warningModal').style.display = 'flex';
+            }, segundos * 1000);
         }
 
         function limpiarTemporizadoresLocales() {
-            clearTimeout(timeoutAviso);
             clearTimeout(timeoutLiberacion);
             document.getElementById('warningModal').style.display = 'none';
-            miEspacioActual = null;
         }
 
         function desocuparDesdeAviso() {
-            if (miEspacioActual) {
-                actualizarEstadoFirebase(miEspacioActual, false, "");
-            }
+            if (miEspacioActual) actualizarEstadoFirebase(miEspacioActual, false, "");
             limpiarTemporizadoresLocales();
         }
 
@@ -1197,35 +990,24 @@
             clearTimeout(timeoutLiberacion);
             
             timeoutLiberacion = setTimeout(() => {
-                if (miEspacioActual) {
-                    actualizarEstadoFirebase(miEspacioActual, false, "");
-                    miEspacioActual = null;
-                }
-            }, 30000);
-
-            if (miEspacioActual) {
-                database.ref('estacionamientos/' + miEspacioActual).update({ tiempo: Date.now() - 120000 });
-            }
+                document.getElementById('warningModal').style.display = 'flex';
+            }, 60000); 
         }
 
         function iniciarLimpiezaAutomatica() {
             setInterval(() => {
                 if (miPlaca === "") return;
-
-                const tiempoMaximo = 150000; 
                 const ahora = Date.now();
-
                 Object.keys(estadoGlobal).forEach(id => {
                     const espacio = estadoGlobal[id];
-                    if (espacio && espacio.estado === true && espacio.tiempo) {
-                        const tiempoTranscurrido = ahora - espacio.tiempo;
-                        
-                        if (tiempoTranscurrido >= tiempoMaximo) {
+                    if (espacio && espacio.estado === true && espacio.tiempo && espacio.duracion) {
+                        const tiempoMaximo = (espacio.duracion * 1000) + 120000; 
+                        if ((ahora - espacio.tiempo) >= tiempoMaximo) {
                             database.ref('estacionamientos/' + id).set({ estado: false, placa: "", tiempo: 0 });
                         }
                     }
                 });
-            }, 5000); 
+            }, 10000); 
         }
 
         function inicializarMapa() {
@@ -1235,23 +1017,322 @@
                 maxZoom: 19
             }).addTo(map);
 
+            map.attributionControl.setPrefix('🇵🇪 Innova Schools');
+
             iconNormal = L.icon({
                 iconUrl: 'https://www.cintermex.com/assets/js/bootstrap-gridmanager/otr/tinymce/plugins/jsplus_file_manager/alphamanager/uploads//imagenes/fotos_generales/Fotos%20factura%20en%20linea/LogoEstacionamiento1.png',
-                iconSize: [42, 42],       
-                iconAnchor: [21, 21],     
-                popupAnchor: [0, -21]     
+                iconSize: [28, 28],       
+                iconAnchor: [14, 14],     
+                popupAnchor: [0, -14]     
             });
 
             iconOcupado = L.icon({
-                iconUrl: 'https://media.istockphoto.com/id/1072078704/es/vector/signo-estacionar-proibido-letra-e-en-rojo-tachado-de-c%C3%ADrculo-vector-de.jpg?s=612x612&w=0&k=20&c=ynxsoZHjqvbs656nt19WgqO0SJfHv1XBDy4OIBNlnbo=',
-                iconSize: [42, 42],       
-                iconAnchor: [21, 21],     
-                popupAnchor: [0, -21]     
+                iconUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHrqA06rpQOmZyyxifqLXt7s42OMULizwopAYl3jICcg&s=10',
+                iconSize: [28, 28],       
+                iconAnchor: [14, 14],     
+                popupAnchor: [0, -14]     
             });
 
             marcadoresLayer = L.layerGroup().addTo(map);
             mapReady = true;
             actualizarMarcadoresMapa();
+        }
+
+        /* -------------------------------------
+           LÓGICA DEL TUTORIAL INTERACTIVO 
+           ------------------------------------- */
+
+        const pasosTutorial = [
+            {
+                target: '.map-container',
+                title: 'Paso 1: Explora el Mapa',
+                desc: 'Visualiza en tiempo real los espacios libres (verde) y ocupados (rojo).'
+            },
+            {
+                target: '#btn-A1',
+                title: 'Paso 2: Ocupar Espacio',
+                desc: 'Aquí verás el botón de ocupar para cada espacio. Presiónalo para abrir el formulario.'
+            },
+            {
+                target: '#plateModal .modal-content',
+                title: 'Paso 3: Registra tu Placa',
+                desc: 'Ingresa tu placa y define el tiempo estimado que dejarás el vehículo.'
+            },
+            {
+                target: '.parking-grid',
+                title: 'Paso 4: Cuadrícula Rápida',
+                desc: 'Usa esta vista miniatura siempre visible en la esquina para presionar rápido el cuadro que prefieras.'
+            },
+            {
+                target: '.nav-menu .nav-item:nth-child(2)',
+                title: 'Paso 5: Mi Asignación',
+                desc: 'Filtra el mapa entero para ver únicamente el espacio que tú has reservado.'
+            },
+            {
+                target: '.nav-menu .nav-item:nth-child(3)',
+                title: 'Paso 6: Registro General',
+                desc: 'Accede a la pestaña para ver la tabla de placas más usadas y las estadísticas totales.'
+            },
+            {
+                target: '.map-toolbar .map-btn:nth-child(1)',
+                title: 'Paso 7: Ver Todos',
+                desc: 'Restaura la vista del mapa para ver todos los espacios de estacionamiento nuevamente.'
+            },
+            {
+                target: '.map-toolbar .map-btn:nth-child(2)',
+                title: 'Paso 8: Solo Ocupados',
+                desc: 'Filtra la vista para mostrarte en el mapa únicamente aquellos lugares que están ocupados.'
+            }
+        ];
+
+        let pasoActual = 0;
+
+        function iniciarTutorialInteractivo() {
+            document.body.classList.add('tutorial-active-mode');
+
+            if(!document.getElementById('tutorial-overlay-bg')) {
+                const bg = document.createElement('div');
+                bg.id = 'tutorial-overlay-bg';
+                bg.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 100000; display: none; backdrop-filter: blur(4px); transition: opacity 0.3s;';
+                document.body.appendChild(bg);
+
+                const dialog = document.createElement('div');
+                dialog.id = 'tutorial-dialog';
+                dialog.style.cssText = 'position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: var(--bg-panel); color: var(--text-main); padding: 24px; border-radius: 20px; z-index: 100003; width: 90%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); border: 2px solid var(--primary-blue); display: none; text-align: center;';
+                document.body.appendChild(dialog);
+            }
+
+            cambiarVista(null, document.querySelector('.nav-item:nth-child(1)'), 'mapa', 'general');
+
+            document.getElementById('tutorial-overlay-bg').style.display = 'block';
+            document.getElementById('tutorial-dialog').style.display = 'block';
+            pasoActual = 0;
+            mostrarPaso(pasoActual);
+        }
+
+        function mostrarPaso(index) {
+            document.querySelectorAll('.tutorial-highlight').forEach(el => {
+                el.classList.remove('tutorial-highlight');
+                if(el.dataset.origPosition) {
+                    el.style.position = el.dataset.origPosition;
+                    delete el.dataset.origPosition;
+                } else {
+                    el.style.position = '';
+                }
+            });
+
+            if (pasosTutorial[index].target.includes('plateModal')) {
+                document.getElementById('plateModal').style.display = 'flex';
+                document.getElementById('plateModal').style.zIndex = '100001'; 
+            } else {
+                document.getElementById('plateModal').style.display = 'none';
+                document.getElementById('plateModal').style.zIndex = '';
+            }
+
+            const paso = pasosTutorial[index];
+            let target = document.querySelector(paso.target);
+
+            if (target) {
+                const compStyle = window.getComputedStyle(target);
+                if (compStyle.position === 'static' && !target.classList.contains('parking-grid')) {
+                    target.dataset.origPosition = target.style.position;
+                    target.style.position = 'relative';
+                }
+                
+                target.classList.add('tutorial-highlight');
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            const dialog = document.getElementById('tutorial-dialog');
+            dialog.innerHTML = `
+                <div style="font-size: 13px; font-weight: 800; color: var(--accent-green); text-transform: uppercase; margin-bottom: 8px;">Paso ${index + 1} de ${pasosTutorial.length}</div>
+                <h3 style="font-size: 20px; color: var(--primary-blue); margin-bottom: 12px;">${paso.title}</h3>
+                <p style="font-size: 15px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">${paso.desc}</p>
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                    ${index > 0 ? `<button class="btn-action btn-secondary" style="flex: 1;" onclick="mostrarPaso(${index - 1})">Anterior</button>` : ''}
+                    ${index < pasosTutorial.length - 1 
+                        ? `<button class="btn-action btn-primary" style="flex: 1;" onclick="mostrarPaso(${index + 1})">Siguiente</button>`
+                        : `<button class="btn-action btn-primary" style="flex: 1; background: var(--status-green);" onclick="cerrarTutorial()">Finalizar</button>`
+                    }
+                </div>
+                <button class="btn-close" style="position: absolute; top: 10px; right: 10px;" onclick="cerrarTutorial()">
+                    <span class="material-icons-round" style="font-size: 20px;">close</span>
+                </button>
+            `;
+        }
+
+        function cerrarTutorial() {
+            document.getElementById('tutorial-overlay-bg').style.display = 'none';
+            document.getElementById('tutorial-dialog').style.display = 'none';
+            document.getElementById('plateModal').style.display = 'none';
+            document.getElementById('plateModal').style.zIndex = '';
+            
+            document.body.classList.remove('tutorial-active-mode');
+
+            document.querySelectorAll('.tutorial-highlight').forEach(el => {
+                el.classList.remove('tutorial-highlight');
+                if(el.dataset.origPosition) {
+                    el.style.position = el.dataset.origPosition;
+                    delete el.dataset.origPosition;
+                } else {
+                    el.style.position = '';
+                }
+            });
+        }
+
+        /* --- LÓGICA DE LA IA YUKI --- */
+        const YUKI_GROQ_API_KEY = "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";
+        const YUKI_GEMINI_API_KEY = "AIzaSyB9IBPkcho42gWCbp_Q8JIc3yuGU3P2xao";
+
+        let chatHistoryGroq = [
+            { role: "system", content: "Eres Yuki, la asistente virtual amigable, muy inteligente y con un toque otaku/anime del sistema de control de tránsito y parqueo de Innova Schools. Estás ayudando en el proyecto del Grupo 5 (Gianella, Pamela, Fernando, Fabrizio, Adolfo, Kristhel) en la sede Chiclayo. Responde de forma concisa, útil e ingeniosa. Usa emojis." }
+        ];
+
+        let chatHistoryGemini = [
+            { role: "user", parts: [{ text: "A partir de ahora eres Yuki, la asistente virtual amigable, muy inteligente y con un toque otaku/anime del sistema de control de tránsito y parqueo de Innova Schools. Estás ayudando en el proyecto del Grupo 5 (Gianella, Pamela, Fernando, Fabrizio, Adolfo, Kristhel) en la sede Chiclayo. Responde a mis consultas de forma concisa, útil e ingeniosa. Usa emojis." }] },
+            { role: "model", parts: [{ text: "¡Entendido! Soy Yuki, tu asistente otaku-tecnológica lista para ayudarte con el sistema de Innova Schools Chiclayo. ¡Vamos a estacionar con estilo!" }] }
+        ];
+
+        let base64ImageYuki = null;
+
+        function toggleYukiChat() {
+            const panel = document.getElementById('yukiChatPanel');
+            panel.classList.toggle('active');
+            if(panel.classList.contains('active')){
+                document.getElementById('yukiTextInput').focus();
+            }
+        }
+
+        function autoResizeYuki(textarea) {
+            textarea.style.height = '24px';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        function checkYukiEnter(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendYukiMessage();
+            }
+        }
+
+        function handleYukiImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    base64ImageYuki = e.target.result;
+                    document.getElementById('yukiImagePreview').src = base64ImageYuki;
+                    document.getElementById('yukiImagePreviewContainer').style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeYukiImage() {
+            base64ImageYuki = null;
+            document.getElementById('yukiImageInput').value = "";
+            document.getElementById('yukiImagePreviewContainer').style.display = 'none';
+        }
+
+        function appendYukiMessage(content, isUser, imgSrc = null) {
+            const container = document.getElementById('yukiMessagesArea');
+            const loader = document.getElementById('yukiLoader');
+            
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `msg-bubble ${isUser ? 'msg-user' : 'msg-yuki'}`;
+            msgDiv.innerHTML = content.replace(/\n/g, '<br>');
+            
+            if(imgSrc) {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.className = 'msg-image';
+                msgDiv.appendChild(img);
+            }
+
+            container.insertBefore(msgDiv, loader);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendYukiMessage() {
+            const inputField = document.getElementById('yukiTextInput');
+            let text = inputField.value.trim();
+            const version = document.getElementById('yukiModelSelect').value;
+            const currentImg = base64ImageYuki;
+            
+            if (!text && !currentImg) return;
+
+            appendYukiMessage(text, true, currentImg);
+            inputField.value = '';
+            inputField.style.height = '24px';
+            removeYukiImage(); 
+            
+            const loader = document.getElementById('yukiLoader');
+            loader.classList.add('active');
+            document.getElementById('yukiMessagesArea').scrollTop = document.getElementById('yukiMessagesArea').scrollHeight;
+
+            try {
+                if (version === 'groq') {
+                    if(currentImg) {
+                        appendYukiMessage("⚠️ *Nota: Yuki 1 (Groq) actualmente solo procesa texto. La imagen fue ignorada. Cambia a Yuki 2 para ver fotos.*", false);
+                    }
+                    chatHistoryGroq.push({ role: "user", content: text });
+                    
+                    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${YUKI_GROQ_API_KEY}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            model: "llama-3.1-8b-instant", 
+                            messages: chatHistoryGroq,
+                            temperature: 0.7
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if(data.choices && data.choices[0]) {
+                        const reply = data.choices[0].message.content;
+                        chatHistoryGroq.push({ role: "assistant", content: reply });
+                        appendYukiMessage(reply, false);
+                    } else {
+                        throw new Error("No valid response from Groq.");
+                    }
+
+                } else if (version === 'gemini') {
+                    let parts = [];
+                    if (text) parts.push({ text: text });
+                    if (currentImg) {
+                        const base64Data = currentImg.split(',')[1]; 
+                        const mimeType = currentImg.substring(currentImg.indexOf(':') + 1, currentImg.indexOf(';'));
+                        parts.push({
+                            inlineData: { mimeType: mimeType, data: base64Data }
+                        });
+                    }
+                    
+                    chatHistoryGemini.push({ role: "user", parts: parts });
+
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${YUKI_GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: chatHistoryGemini })
+                    });
+
+                    const data = await response.json();
+                    if(data.candidates && data.candidates[0].content) {
+                        const reply = data.candidates[0].content.parts[0].text;
+                        chatHistoryGemini.push({ role: "model", parts: [{ text: reply }] });
+                        appendYukiMessage(reply, false);
+                    } else {
+                        throw new Error("No valid response from Gemini.");
+                    }
+                }
+            } catch (error) {
+                console.error("Yuki Error:", error);
+                appendYukiMessage("Ugh... mi sistema reportó un pequeño bug. 🐛 Lo siento mucho, ¿podrías intentar de nuevo?", false);
+            } finally {
+                loader.classList.remove('active');
+            }
         }
     </script>
 </body>
