@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -118,7 +120,6 @@
         body.dark-mode .top-header { background: rgba(30, 41, 59, 0.9); }
         .top-header h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
 
-        /* Estilos del Input de Seguridad Oculto y su Indicador */
         .admin-trigger-container { display: flex; align-items: center; gap: 8px; margin-left: 15px; }
         .indicador-seguridad { width: 10px; height: 10px; background-color: var(--border-color); border-radius: 3px; cursor: pointer; transition: background-color 0.3s; }
         .indicador-seguridad:hover { background-color: var(--status-red); box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); }
@@ -142,6 +143,46 @@
         .spot:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
         .spot.green { background: linear-gradient(135deg, #22c55e, #16a34a); }
         .spot.red { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+        .animating-parking {
+            position: relative;
+            overflow: visible !important;
+        }
+        .animating-parking::before {
+            content: '🚗';
+            position: absolute;
+            font-size: 32px;
+            z-index: 10;
+            animation: parkCarBrake 3s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+            pointer-events: none;
+        }
+        .animating-parking::after {
+            content: '💨';
+            position: absolute;
+            font-size: 24px;
+            z-index: 5;
+            bottom: -15px;
+            right: -10px;
+            opacity: 0;
+            animation: smokeBrake 4s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+            animation-delay: 0.5s; 
+            pointer-events: none;
+        }
+
+        @keyframes parkCarBrake {
+            0% { transform: translateY(150px) scale(0.5); opacity: 0; }
+            20% { transform: translateY(15px) scale(1.1); opacity: 1; }
+            30% { transform: translateY(-5px) scale(0.9); } 
+            50% { transform: translateY(2px) scale(1); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        @keyframes smokeBrake {
+            0% { opacity: 0; transform: translate(0, 0) scale(0.5) rotate(0deg); }
+            15% { opacity: 0.9; transform: translate(-15px, 10px) scale(1.5) rotate(-10deg); }
+            50% { opacity: 0.4; transform: translate(-30px, 20px) scale(2.5) rotate(-20deg); filter: blur(2px); }
+            100% { opacity: 0; transform: translate(-50px, 30px) scale(4) rotate(-30deg); filter: blur(6px); }
+        }
 
         .table-card { background: var(--bg-panel); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); padding: 24px; overflow-x: auto; transition: background-color 0.3s, border-color 0.3s; }
         .card-header { margin-bottom: 20px; }
@@ -185,7 +226,6 @@
         .stat-title { color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; }
         .stat-value { font-size: 48px; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-top: 12px; }
 
-        /* --- ESTILOS DE YUKI IA --- */
         .yuki-fab { position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0, 80, 136, 0.4); cursor: pointer; z-index: 9000; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 3px solid white; }
         body.dark-mode .yuki-fab { border-color: var(--bg-panel); }
         .yuki-fab:hover { transform: scale(1.1) rotate(5deg); }
@@ -228,9 +268,6 @@
         .image-preview-container img { height: 60px; border-radius: 8px; border: 1px solid var(--border-color); }
         .remove-image-btn { position: absolute; top: 0; left: 65px; background: var(--status-red); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-        /* -------------------------------------
-           CSS FIX PARA EL TUTORIAL INTERACTIVO 
-           ------------------------------------- */
         .tutorial-container-view { padding: 32px; display: none; max-width: 1200px; margin: 0 auto; width: 100%; }
         .tutorial-header { text-align: center; margin-bottom: 40px; }
         .tutorial-header h2 { color: var(--primary-blue); font-size: 28px; font-weight: 800; margin-bottom: 12px; }
@@ -289,14 +326,13 @@
             .registro-container, .tutorial-container-view { padding: 16px; }
             .stat-card { padding: 20px; }
             
-            /* Solución Definitiva al Teclado Móvil para Yuki */
             .yuki-chat-panel { 
                 width: 100%; height: 100dvh; max-height: 100dvh; border-radius: 0; 
                 position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 99999; 
             }
             .yuki-fab { bottom: 20px; right: 20px; }
 
-            .admin-trigger-container { display: none !important; } /* Ocultar Seguridad en Móviles */
+            .admin-trigger-container { display: none !important; } 
         }
     </style>
 </head>
@@ -496,6 +532,20 @@
                 </div>
             </div>
             
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
+                <div class="table-card">
+                    <h3 style="margin-bottom: 16px; color: var(--text-main); font-size: 18px;">Ocupación en Tiempo Real</h3>
+                    <div style="position: relative; height: 250px; width: 100%;">
+                        <canvas id="chartOcupacion"></canvas>
+                    </div>
+                </div>
+                <div class="table-card">
+                    <h3 style="margin-bottom: 16px; color: var(--text-main); font-size: 18px;">Demanda por Zonas</h3>
+                    <div style="position: relative; height: 250px; width: 100%;">
+                        <canvas id="chartZonas"></canvas>
+                    </div>
+                </div>
+            </div>
             <div class="table-card" style="margin-top: 24px;">
                 <h3 style="margin-bottom: 24px; color: var(--text-main); font-size: 20px;">Registro de Placas</h3>
                 <div style="max-height: 400px; overflow-y: auto; padding-right: 8px;">
@@ -656,6 +706,13 @@
 
             modoSidebar = subModo || 'general';
             if(vistaDestino === 'mapa') actualizarMarcadoresMapa();
+            
+            if(vistaDestino === 'registro') {
+                setTimeout(() => {
+                    if (chartOcupacionIns) chartOcupacionIns.resize();
+                    if (chartZonasIns) chartZonasIns.resize();
+                }, 50);
+            }
         }
 
         function cambiarBotonMapa(elemento, modo) {
@@ -678,7 +735,6 @@
         
         window.addEventListener('resize', ajustarVistaMovil);
 
-        /* --- SOLUCIÓN DE YUKI PARA TECLADO MÓVIL DENTRO DE 100dvh --- */
         if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => {
                 const panel = document.getElementById('yukiChatPanel');
@@ -788,6 +844,82 @@
             { lat: -6.827133813829958, lng: -79.9241329467225, name: "G5" }
         ];
 
+        let chartOcupacionIns;
+        let chartZonasIns;
+
+        function initCharts() {
+            const ctxOcu = document.getElementById('chartOcupacion');
+            if(ctxOcu) {
+                chartOcupacionIns = new Chart(ctxOcu.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Ocupados', 'Libres'],
+                        datasets: [{
+                            data: [0, 35],
+                            backgroundColor: ['#ef4444', '#22c55e'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true,
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+
+            const ctxZonas = document.getElementById('chartZonas');
+            if(ctxZonas) {
+                chartZonasIns = new Chart(ctxZonas.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G'],
+                        datasets: [{
+                            label: 'Vehículos',
+                            data: [0,0,0,0,0,0,0],
+                            backgroundColor: [
+                                'rgba(0, 80, 136, 0.8)',
+                                'rgba(132, 189, 0, 0.8)',
+                                'rgba(239, 68, 68, 0.8)',
+                                'rgba(245, 158, 11, 0.8)',
+                                'rgba(34, 197, 94, 0.8)',
+                                'rgba(168, 85, 247, 0.8)',
+                                'rgba(14, 165, 233, 0.8)'
+                            ],
+                            borderRadius: 8,
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1500,
+                            easing: 'easeOutQuart'
+                        },
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                ticks: { stepSize: 1 } 
+                            } 
+                        },
+                        plugins: {
+                            legend: { display: false }
+                        }
+                    }
+                });
+            }
+        }
+
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -810,6 +942,7 @@
                 });
 
             generarEstructuraDOM();
+            initCharts(); 
             inicializarMapa();
             escucharFirebase();
             escucharEstadisticas(); 
@@ -819,7 +952,6 @@
             iniciarLimpiezaAutomatica();
         });
 
-        /* --- MODO SEGURIDAD (ADMIN) LOGIC --- */
         function verificarAdmin(e) {
             if (e.key === 'Enter') {
                 if (e.target.value === 'Security') {
@@ -957,7 +1089,6 @@
         function eliminarAlertaYuki(key) {
             database.ref('alertas_yuki/' + key).remove();
         }
-        /* -------------------------------------- */
 
         function escucharHistorial() {
             database.ref('historial_reservas').on('value', (snapshot) => {
@@ -1111,6 +1242,15 @@
             }
 
             actualizarEstadoFirebase(espacioPendiente, true, miPlaca, tiempoReservaSegundos);
+            
+            const spotAnim = document.getElementById(`spot-${espacioPendiente}`);
+            if (spotAnim) {
+                spotAnim.classList.add('animating-parking');
+                setTimeout(() => {
+                    spotAnim.classList.remove('animating-parking');
+                }, 4500); 
+            }
+
             iniciarTemporizadoresLocales(espacioPendiente, tiempoReservaSegundos);
             
             database.ref('historial_reservas').push({
@@ -1141,15 +1281,30 @@
                 if (data) {
                     estadoGlobal = data;
                     let ocupados = 0;
+                    let zonasCount = {A:0, B:0, C:0, D:0, E:0, F:0, G:0}; 
+
                     Object.keys(data).forEach(id => {
                         sincronizarUI(id, data[id].estado, data[id].placa);
-                        if (data[id].estado === true) ocupados++;
+                        if (data[id].estado === true) {
+                            ocupados++;
+                            let letra = id.charAt(0);
+                            if(zonasCount[letra] !== undefined) zonasCount[letra]++;
+                        }
                     });
                     document.getElementById('contador-espacios').textContent = `${ocupados} / ${espacios.length} Activos`;
                     actualizarMarcadoresMapa();
                     
                     if(document.getElementById('vista-seguridad').style.display === 'block') {
                         actualizarTablaAdmin();
+                    }
+
+                    if (chartOcupacionIns) {
+                        chartOcupacionIns.data.datasets[0].data = [ocupados, espacios.length - ocupados];
+                        chartOcupacionIns.update();
+                    }
+                    if (chartZonasIns) {
+                        chartZonasIns.data.datasets[0].data = [zonasCount.A, zonasCount.B, zonasCount.C, zonasCount.D, zonasCount.E, zonasCount.F, zonasCount.G];
+                        chartZonasIns.update();
                     }
                 }
             });
@@ -1287,10 +1442,6 @@
             mapReady = true;
             actualizarMarcadoresMapa();
         }
-
-        /* -------------------------------------
-           LÓGICA DEL TUTORIAL INTERACTIVO 
-           ------------------------------------- */
 
         const pasosTutorial = [
             {
@@ -1430,7 +1581,6 @@
             });
         }
 
-        /* --- LÓGICA DE LA IA YUKI --- */
         const YUKI_GROQ_API_KEY = "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";
         const YUKI_GEMINI_API_KEY = "AIzaSyB9IBPkcho42gWCbp_Q8JIc3yuGU3P2xao";
 
